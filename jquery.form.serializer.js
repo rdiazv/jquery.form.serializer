@@ -79,7 +79,7 @@
           castings: castings
         }, options);
         fields = [];
-        $submittable = this.$this.find(options.submittable.selector).filter(":not(:file)[name]");
+        $submittable = this.$this.find(options.submittable.selector).filter(":not(:button, :submit, :file, :reset, :image)[name]");
         _ref = options.submittable.filters;
         for (_ in _ref) {
           filter = _ref[_];

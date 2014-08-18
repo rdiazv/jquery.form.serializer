@@ -4,7 +4,17 @@ This jQuery extension provides an easy way to serialize HTML forms into JSON.
 
 By default the serialization it's based on the submittable fields according to [W3C Successful controls](http://www.w3.org/TR/html401/interact/forms.html#h-17.13.2), but this is easily customizable to fit your needs.
 
-**NOTE:** File inputs are ignored.
+The following elements are always ignored:
+
+* Elements without a `name` attribute.
+* `input[type="file"]`
+* `input[type="button"]`
+* `input[type="submit"]`
+* `input[type="reset"]`
+* `input[type="image"]`
+* `button[type="button"]`
+* `button[type="submit"]`
+* `button[type="reset"]`
 
 ## Installation
 

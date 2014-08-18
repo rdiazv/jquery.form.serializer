@@ -68,7 +68,7 @@
       fields = []
 
       $submittable = @$this.find(options.submittable.selector)
-        .filter(":not(:file)[name]")
+        .filter(":not(:button, :submit, :file, :reset, :image)[name]")
 
       for _, filter of options.submittable.filters
         continue if filter == false or not filter?

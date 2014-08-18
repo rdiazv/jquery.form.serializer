@@ -18,6 +18,7 @@ describe '$.fn.getSerializedForm.Serializer', ->
         <input type="checkbox" name="user[skills][]" value="C++" />
         <input type="checkbox" name="user[skills][]" value="Java" />
         <input type="checkbox" name="user[skills][]" value="CSS" checked />
+        <input type="button" name="my-submit" value="Submit Form" />
       </form>
       """
 
