@@ -10,6 +10,9 @@
     named: /^([a-zA-Z][a-zA-Z0-9-_:\.]*)\[(.+)\]$/
 
   class Serializer
+    constructor: ($this) ->
+      @$this = $this
+
     serializeField: (name, value) ->
       response = {}
 
@@ -25,8 +28,10 @@
 
       response
 
-  $.fn.getSerializedForm = (options = {}) ->
-    this.each ->
+    serialize: ->
+
+  $.fn.getSerializedForm = ->
+    new $.fn.getSerializedForm.Serializer(@first()).serialize()
 
   $.fn.getSerializedForm.regexp = regexp
   $.fn.getSerializedForm.Serializer = Serializer

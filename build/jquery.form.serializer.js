@@ -8,7 +8,9 @@
       named: /^([a-zA-Z][a-zA-Z0-9-_:\.]*)\[(.+)\]$/
     };
     Serializer = (function() {
-      function Serializer() {}
+      function Serializer($this) {
+        this.$this = $this;
+      }
 
       Serializer.prototype.serializeField = function(name, value) {
         var matches, response;
@@ -24,14 +26,13 @@
         return response;
       };
 
+      Serializer.prototype.serialize = function() {};
+
       return Serializer;
 
     })();
-    $.fn.getSerializedForm = function(options) {
-      if (options == null) {
-        options = {};
-      }
-      return this.each(function() {});
+    $.fn.getSerializedForm = function() {
+      return new $.fn.getSerializedForm.Serializer(this.first()).serialize();
     };
     $.fn.getSerializedForm.regexp = regexp;
     return $.fn.getSerializedForm.Serializer = Serializer;

@@ -1,9 +1,15 @@
 
 describe '$.fn.getSerializedForm.Serializer', ->
-  beforeEach ->
-    @serializer = new $.fn.getSerializedForm.Serializer
+  describe 'constructor($this)', ->
+    it 'should save the element as an instance variable', ->
+      $this = $()
+      serializer = new $.fn.getSerializedForm.Serializer($this)
+      expect(serializer.$this).to.eq($this)
 
   describe '.serializeField(name, value)', ->
+    beforeEach ->
+      @serializer = new $.fn.getSerializedForm.Serializer
+
     context 'if the name is a simple field name', ->
       it 'should return a plain value', ->
         value = @serializer.serializeField('email', 'test@email.com')
