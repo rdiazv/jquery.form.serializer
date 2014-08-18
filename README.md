@@ -197,4 +197,4 @@ $("#my-form").getSerializedForm({
 
 ## Tests
 
-Open `./test/index.html` on any browser.
+Open `./test/index.html` on any browser, or if you have [Node.js](http://nodejs.org/) installed, run `npm install` and `npm test`.
