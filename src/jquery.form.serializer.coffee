@@ -6,6 +6,7 @@
 
   regexp =
     simple: /^[a-zA-Z][a-zA-Z0-9-_:\.]*$/
+    array: /^[a-zA-Z][a-zA-Z0-9-_:\.]*\[\]$/
 
   class Serializer
     serializeField: (name, value) ->
