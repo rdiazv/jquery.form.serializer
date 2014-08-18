@@ -10,7 +10,7 @@
     it('should define a jQuery function named getSerializedForm', function() {
       return expect($()).to.respondTo('getSerializedForm');
     });
-    return describe('getSerializedForm()', function() {
+    return describe('.getSerializedForm()', function() {
       it('should create an instance of Serializer passing the first form in the matching set', function() {
         var $forms, form1, form2;
         this.sandbox.spy($.fn.getSerializedForm, 'Serializer');

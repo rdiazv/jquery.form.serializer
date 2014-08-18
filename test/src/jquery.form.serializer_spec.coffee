@@ -9,7 +9,7 @@ describe 'jquery.form.serializer', ->
   it 'should define a jQuery function named getSerializedForm', ->
     expect($()).to.respondTo('getSerializedForm')
 
-  describe 'getSerializedForm()', ->
+  describe '.getSerializedForm()', ->
     it 'should create an instance of Serializer passing the first form in the
     matching set', ->
       @sandbox.spy($.fn.getSerializedForm, 'Serializer')
