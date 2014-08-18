@@ -98,7 +98,7 @@
         fields = this.serializer.getSubmittableFieldValues();
         return expect(fields).to.eql([["test", "valid"]]);
       });
-      return it('should be customizable by passing options', function() {
+      it('should be customizable by passing options', function() {
         var fields;
         this.$form.html("<input type=\"text\" name=\"test1\" value=\"enabled\" />\n<input type=\"text\" name=\"test2\" value=\"disabled\" disabled />");
         fields = this.serializer.getSubmittableFieldValues({
@@ -109,6 +109,38 @@
           }
         });
         return expect(fields).to.eql([["test1", "enabled"], ["test2", "disabled"]]);
+      });
+      return context('working with custom controls', function() {
+        beforeEach(function() {
+          return $.valHooks.custom_control = {
+            get: function(el) {
+              return $(el).data("value");
+            },
+            set: function(el, value) {
+              return $(el).data({
+                "value": value
+              });
+            }
+          };
+        });
+        afterEach(function() {
+          return delete $.valHooks.custom_control;
+        });
+        return it('should work with custom control types', function() {
+          var $control, fields;
+          $control = $("<div class=\"custom-control\" name=\"custom\"/>");
+          $control.data({
+            "value": "my value"
+          });
+          $control.get(0).type = "custom_control";
+          this.$form.html($control);
+          fields = this.serializer.getSubmittableFieldValues({
+            submittable: {
+              selector: "" + $.fn.getSerializedForm.submittable.selector + ", .custom-control"
+            }
+          });
+          return expect(fields).to.eql([["custom", "my value"]]);
+        });
       });
     });
     return describe('.serialize(options = {})', function() {

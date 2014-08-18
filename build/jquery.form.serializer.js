@@ -25,7 +25,7 @@
       selector: 'input, select, textarea',
       filters: {
         enabled: function() {
-          return $(this).is(":enabled");
+          return $(this).is(":not(:disabled)");
         },
         checked: function() {
           if ($(this).is(":checkbox, :radio")) {

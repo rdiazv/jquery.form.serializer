@@ -109,6 +109,30 @@ describe '$.fn.getSerializedForm.Serializer', ->
 
       expect(fields).to.eql [["test1", "enabled"], ["test2", "disabled"]]
 
+    context 'working with custom controls', ->
+      beforeEach ->
+        $.valHooks.custom_control =
+          get: (el) ->
+            $(el).data("value")
+
+          set: (el, value) ->
+            $(el).data("value": value)
+
+      afterEach ->
+        delete $.valHooks.custom_control
+
+      it 'should work with custom control types', ->
+        $control = $("""<div class="custom-control" name="custom"/>""")
+        $control.data("value": "my value")
+        $control.get(0).type = "custom_control"
+        @$form.html($control)
+
+        fields = @serializer.getSubmittableFieldValues
+          submittable:
+            selector: "#{$.fn.getSerializedForm.submittable.selector}, .custom-control"
+
+        expect(fields).to.eql [["custom", "my value"]]
+
   describe '.serialize(options = {})', ->
     beforeEach ->
       @serializer = new $.fn.getSerializedForm.Serializer(@$form)

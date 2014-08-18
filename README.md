@@ -91,6 +91,59 @@ $("#my-form").getSerializedForm({
 });
 ```
 
+### Custom Controls
+
+You can easily integrate any custom control for serialization. For example, given this custom control:
+
+```html
+<form id="my-form">
+  <div class="custom-control"
+    name="my-custom-control"
+    data-custom-value="my value">
+  </div>
+</form>
+```
+
+```javascript
+$.valHooks.custom_control = {
+  get: function(el) {
+    $(el).data("custom-value");
+  },
+  set: function(el, value) {
+    $(el).data({ "custom-value": value });
+  }
+};
+
+$.fn.customControl = function() {
+  return $(this).each(function() {
+    this.type = "custom_control";
+  });
+
+  // All your custom control magic...
+};
+
+$(function() {
+  $(".custom-control").customControl();
+});
+```
+
+Add your custom control to the global configuration:
+
+```javascript
+$.fn.getSerializedForm.submittable.selector += ", .custom-control"
+```
+
+And that's it!
+
+```javascript
+$("#my-form").getSerializedForm();
+
+// =>
+{
+  "my-custom-control": "my value"
+}
+```
+
 Tests
 -----
 

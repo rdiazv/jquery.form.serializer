@@ -23,7 +23,7 @@
     selector: 'input, select, textarea'
     filters:
       enabled: ->
-        $(this).is(":enabled")
+        $(this).is(":not(:disabled)")
 
       checked: ->
         if $(this).is(":checkbox, :radio")
