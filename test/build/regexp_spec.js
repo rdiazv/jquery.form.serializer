@@ -11,11 +11,11 @@
       it('should not match against array field names', function() {
         return expect('array_field[]').to.not.match(this.regexp);
       });
-      return it('should not match against fixed array field names', function() {
-        return expect('fixed_array_field[test]').to.not.match(this.regexp);
+      return it('should not match against named array field names', function() {
+        return expect('named_array_field[test]').to.not.match(this.regexp);
       });
     });
-    return describe('array', function() {
+    describe('array', function() {
       beforeEach(function() {
         return this.regexp = $.fn.getSerializedForm.regexp.array;
       });
@@ -25,8 +25,22 @@
       it('should not match against simple field names', function() {
         return expect('simple_field').to.not.match(this.regexp);
       });
-      return it('should not match against fixed array field names', function() {
-        return expect('fixed_array_field[test]').to.not.match(this.regexp);
+      return it('should not match against named array field names', function() {
+        return expect('named_array_field[test]').to.not.match(this.regexp);
+      });
+    });
+    return describe('named', function() {
+      beforeEach(function() {
+        return this.regexp = $.fn.getSerializedForm.regexp.named;
+      });
+      it('should match against named array field names', function() {
+        return expect('named_array_field[test]').to.match(this.regexp);
+      });
+      it('should not match against array field names', function() {
+        return expect('array_field[]').to.not.match(this.regexp);
+      });
+      return it('should not match against simple field names', function() {
+        return expect('simple_field').to.not.match(this.regexp);
       });
     });
   });
