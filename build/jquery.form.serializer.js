@@ -50,7 +50,16 @@
         return fields;
       };
 
-      Serializer.prototype.serialize = function() {};
+      Serializer.prototype.serialize = function() {
+        var field, fields, values, _i, _len;
+        values = {};
+        fields = this.getSubmittableFieldValues();
+        for (_i = 0, _len = fields.length; _i < _len; _i++) {
+          field = fields[_i];
+          $.extend(true, values, this.serializeField(field[0], field[1]));
+        }
+        return values;
+      };
 
       return Serializer;
 

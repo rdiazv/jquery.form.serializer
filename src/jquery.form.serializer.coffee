@@ -46,6 +46,13 @@
       fields
 
     serialize: ->
+      values = {}
+      fields = @getSubmittableFieldValues()
+
+      for field in fields
+        $.extend(true, values, @serializeField(field[0], field[1]))
+
+      values
 
   $.fn.getSerializedForm = ->
     new $.fn.getSerializedForm.Serializer(@first()).serialize()
