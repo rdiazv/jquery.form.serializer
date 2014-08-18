@@ -1,3 +1,9 @@
+0.3 (August 18, 2014)
+
+* Adding custom control filter example.
+* File inputs are now ignored.
+* Adding value castings.
+
 0.2.1 (August 18, 2014)
 ------------------------
 
