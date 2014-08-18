@@ -49,7 +49,7 @@
         this.arrays = {};
       }
 
-      Serializer.prototype.serializeField = function(name, value, fullName) {
+      Serializer.prototype._serializeField = function(name, value, fullName) {
         var cleanName, matches, response, _base;
         if (fullName == null) {
           fullName = name;
@@ -66,13 +66,13 @@
             this.arrays[fullName].push(value);
             response[matches[1]] = this.arrays[fullName];
           } else {
-            response[matches[1]] = this.serializeField(cleanName, value, name);
+            response[matches[1]] = this._serializeField(cleanName, value, name);
           }
         }
         return response;
       };
 
-      Serializer.prototype.getSubmittableFieldValues = function(options) {
+      Serializer.prototype._getSubmittableFieldValues = function(options) {
         var $submittable, fields, filter, _, _ref;
         options = $.extend(true, {}, {
           submittable: submittable,
@@ -116,16 +116,16 @@
         return fields;
       };
 
-      Serializer.prototype.serialize = function(options) {
+      Serializer.prototype.toJSON = function(options) {
         var field, fields, values, _i, _len;
         if (options == null) {
           options = {};
         }
         values = {};
-        fields = this.getSubmittableFieldValues(options);
+        fields = this._getSubmittableFieldValues(options);
         for (_i = 0, _len = fields.length; _i < _len; _i++) {
           field = fields[_i];
-          $.extend(true, values, this.serializeField(field.name, field.value));
+          $.extend(true, values, this._serializeField(field.name, field.value));
         }
         return values;
       };
@@ -137,7 +137,7 @@
       if (options == null) {
         options = {};
       }
-      return new $.fn.getSerializedForm.Serializer(this.first()).serialize(options);
+      return new $.fn.getSerializedForm.Serializer(this.first()).toJSON(options);
     };
     $.fn.getSerializedForm.regexp = regexp;
     $.fn.getSerializedForm.submittable = submittable;

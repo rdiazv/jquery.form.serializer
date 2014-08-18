@@ -41,7 +41,7 @@
       @$this = $this
       @arrays = {}
 
-    serializeField: (name, value, fullName = name) ->
+    _serializeField: (name, value, fullName = name) ->
       response = {}
 
       if regexp.simple.test(name)
@@ -55,11 +55,11 @@
           @arrays[fullName].push(value)
           response[matches[1]] = @arrays[fullName]
         else
-          response[matches[1]] = @serializeField(cleanName, value, name)
+          response[matches[1]] = @_serializeField(cleanName, value, name)
 
       response
 
-    getSubmittableFieldValues: (options) ->
+    _getSubmittableFieldValues: (options) ->
       options = $.extend true, {},
         submittable: submittable
         castings: castings
@@ -94,17 +94,17 @@
 
       fields
 
-    serialize: (options = {}) ->
+    toJSON: (options = {}) ->
       values = {}
-      fields = @getSubmittableFieldValues(options)
+      fields = @_getSubmittableFieldValues(options)
 
       for field in fields
-        $.extend(true, values, @serializeField(field.name, field.value))
+        $.extend(true, values, @_serializeField(field.name, field.value))
 
       values
 
   $.fn.getSerializedForm = (options = {}) ->
-    new $.fn.getSerializedForm.Serializer(@first()).serialize(options)
+    new $.fn.getSerializedForm.Serializer(@first()).toJSON(options)
 
   $.fn.getSerializedForm.regexp = regexp
   $.fn.getSerializedForm.submittable = submittable

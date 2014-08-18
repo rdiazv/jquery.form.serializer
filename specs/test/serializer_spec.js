@@ -16,14 +16,14 @@
         return expect(serializer.$this).to.eq($this);
       });
     });
-    describe('.serializeField(name, value)', function() {
+    describe('._serializeField(name, value)', function() {
       beforeEach(function() {
         return this.serializer = new $.fn.getSerializedForm.Serializer;
       });
       context('if the name is a simple field name', function() {
         return it('should return a plain value', function() {
           var value;
-          value = this.serializer.serializeField('email', 'test@email.com');
+          value = this.serializer._serializeField('email', 'test@email.com');
           return expect(value).to.eql({
             email: 'test@email.com'
           });
@@ -33,21 +33,21 @@
         context('the key', function() {
           return it('should not contain the brackets', function() {
             var value;
-            value = this.serializer.serializeField('emails[]', 'test@email.com');
+            value = this.serializer._serializeField('emails[]', 'test@email.com');
             return expect(value).to.have.key('emails');
           });
         });
         it('should return an array', function() {
           var value;
-          value = this.serializer.serializeField('emails[]', 'test@email.com');
+          value = this.serializer._serializeField('emails[]', 'test@email.com');
           return expect(value).to.eql({
             emails: ['test@email.com']
           });
         });
         return it('should merge consecutive calls to the same array field', function() {
           var value;
-          this.serializer.serializeField('emails[]', 'test1@email.com');
-          value = this.serializer.serializeField('emails[]', 'test2@email.com');
+          this.serializer._serializeField('emails[]', 'test1@email.com');
+          value = this.serializer._serializeField('emails[]', 'test2@email.com');
           return expect(value).to.eql({
             emails: ['test1@email.com', 'test2@email.com']
           });
@@ -57,13 +57,13 @@
         context('the key', function() {
           return it('should not contain the brackets', function() {
             var value;
-            value = this.serializer.serializeField('emails[john]', 'john@email.com');
+            value = this.serializer._serializeField('emails[john]', 'john@email.com');
             return expect(value).to.have.key('emails');
           });
         });
         it('should return a json object', function() {
           var value;
-          value = this.serializer.serializeField('emails[john]', 'john@email.com');
+          value = this.serializer._serializeField('emails[john]', 'john@email.com');
           return expect(value).to.eql({
             emails: {
               john: 'john@email.com'
@@ -72,7 +72,7 @@
         });
         return it('should handle nested attributes', function() {
           var value;
-          value = this.serializer.serializeField('emails[john][current]', 'john@email.com');
+          value = this.serializer._serializeField('emails[john][current]', 'john@email.com');
           return expect(value).to.eql({
             emails: {
               john: {
@@ -83,13 +83,13 @@
         });
       });
     });
-    describe('.getSubmittableFieldValues(options)', function() {
+    describe('._getSubmittableFieldValues(options)', function() {
       beforeEach(function() {
         return this.serializer = new $.fn.getSerializedForm.Serializer(this.$form);
       });
       it('should return all submittable fields as a name, value json array', function() {
         var fields;
-        fields = this.serializer.getSubmittableFieldValues();
+        fields = this.serializer._getSubmittableFieldValues();
         return expect(fields).to.eql([
           {
             name: "token",
@@ -121,7 +121,7 @@
       it('should ignore fields without a name', function() {
         var fields;
         this.$form.html("<input type=\"text\" name=\"test\" value=\"valid\" />\n<input type=\"text\" value=\"invalid\" />");
-        fields = this.serializer.getSubmittableFieldValues();
+        fields = this.serializer._getSubmittableFieldValues();
         return expect(fields).to.eql([
           {
             name: "test",
@@ -132,7 +132,7 @@
       it('should be customizable by passing options', function() {
         var fields;
         this.$form.html("<input type=\"text\" name=\"test1\" value=\"enabled\" />\n<input type=\"text\" name=\"test2\" value=\"disabled\" disabled />");
-        fields = this.serializer.getSubmittableFieldValues({
+        fields = this.serializer._getSubmittableFieldValues({
           submittable: {
             filters: {
               enabled: false
@@ -168,7 +168,7 @@
           });
           $control.get(0).type = "custom_control";
           this.$form.html($control);
-          fields = this.serializer.getSubmittableFieldValues({
+          fields = this.serializer._getSubmittableFieldValues({
             submittable: {
               selector: "" + $.fn.getSerializedForm.submittable.selector + ", .custom-control"
             }
@@ -184,7 +184,7 @@
       it('should call value castings on every field', function() {
         var fields;
         this.$form.html("<input type=\"text\" value=\"123\" name=\"field1\" class=\"numeric\" />\n<input type=\"text\" value=\"123\" name=\"field2\" />");
-        fields = this.serializer.getSubmittableFieldValues({
+        fields = this.serializer._getSubmittableFieldValues({
           castings: {
             numericFields: function() {
               if ($(this).hasClass("numeric")) {
@@ -206,7 +206,7 @@
       return it('should allow to customize castings by passing options', function() {
         var fields;
         this.$form.html("<input type=\"checkbox\" name=\"test\" checked />");
-        fields = this.serializer.getSubmittableFieldValues({
+        fields = this.serializer._getSubmittableFieldValues({
           castings: {
             booleanCheckbox: false
           }
@@ -219,12 +219,12 @@
         ]);
       });
     });
-    return describe('.serialize(options = {})', function() {
+    return describe('.toJSON(options = {})', function() {
       beforeEach(function() {
         return this.serializer = new $.fn.getSerializedForm.Serializer(this.$form);
       });
       it('should return a json with all the submittable field values serialized', function() {
-        return expect(this.serializer.serialize()).to.eql({
+        return expect(this.serializer.toJSON()).to.eql({
           token: 'ABC',
           user: {
             name: "John Doe",
@@ -236,14 +236,14 @@
           }
         });
       });
-      return it('should pass the options to getSubmittableFieldValues', function() {
+      return it('should pass the options to _getSubmittableFieldValues', function() {
         var options;
-        this.sandbox.spy($.fn.getSerializedForm.Serializer.prototype, "getSubmittableFieldValues");
+        this.sandbox.spy($.fn.getSerializedForm.Serializer.prototype, "_getSubmittableFieldValues");
         options = {
           option1: 1
         };
-        this.serializer.serialize(options);
-        return expect($.fn.getSerializedForm.Serializer.prototype.getSubmittableFieldValues).to.have.been.calledWith(options);
+        this.serializer.toJSON(options);
+        return expect($.fn.getSerializedForm.Serializer.prototype._getSubmittableFieldValues).to.have.been.calledWith(options);
       });
     });
   });

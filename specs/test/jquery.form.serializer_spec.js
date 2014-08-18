@@ -14,7 +14,7 @@
       it('should create an instance of Serializer passing the first form in the matching set', function() {
         var $forms, form1, form2;
         this.sandbox.spy($.fn.getSerializedForm, 'Serializer');
-        this.sandbox.stub($.fn.getSerializedForm.Serializer.prototype, "serialize");
+        this.sandbox.stub($.fn.getSerializedForm.Serializer.prototype, "toJSON");
         form1 = $("<form/>").get(0);
         form2 = $("<form/>").get(0);
         $forms = $();
@@ -24,8 +24,8 @@
         expect($.fn.getSerializedForm.Serializer).to.have.been.calledOnce;
         return expect($.fn.getSerializedForm.Serializer.getCall(0).args[0].get(0)).to.eq(form1);
       });
-      return it('should return the serialize function response', function() {
-        this.sandbox.stub($.fn.getSerializedForm.Serializer.prototype, "serialize").returns("test response");
+      return it('should return the toJSON function response', function() {
+        this.sandbox.stub($.fn.getSerializedForm.Serializer.prototype, "toJSON").returns("test response");
         return expect($().getSerializedForm()).to.eql("test response");
       });
     });
