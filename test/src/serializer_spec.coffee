@@ -25,6 +25,11 @@ describe '$.fn.getSerializedForm.Serializer', ->
         value = @serializer.serializeField('emails[]', 'test@email.com')
         expect(value).to.eql(emails: ['test@email.com'])
 
+      it 'should merge consecutive calls to the same array field', ->
+        @serializer.serializeField('emails[]', 'test1@email.com')
+        value = @serializer.serializeField('emails[]', 'test2@email.com')
+        expect(value).to.eql(emails: ['test1@email.com', 'test2@email.com'])
+
     context 'if the name is a named array field name', ->
       context 'the key', ->
         it 'should not contain the brackets', ->

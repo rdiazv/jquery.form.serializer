@@ -30,11 +30,19 @@
             return expect(value).to.have.key('emails');
           });
         });
-        return it('should return an array', function() {
+        it('should return an array', function() {
           var value;
           value = this.serializer.serializeField('emails[]', 'test@email.com');
           return expect(value).to.eql({
             emails: ['test@email.com']
+          });
+        });
+        return it('should merge consecutive calls to the same array field', function() {
+          var value;
+          this.serializer.serializeField('emails[]', 'test1@email.com');
+          value = this.serializer.serializeField('emails[]', 'test2@email.com');
+          return expect(value).to.eql({
+            emails: ['test1@email.com', 'test2@email.com']
           });
         });
       });

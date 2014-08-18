@@ -15,19 +15,23 @@
   class Serializer
     constructor: ($this) ->
       @$this = $this
+      @arrays = {}
 
-    serializeField: (name, value) ->
+    serializeField: (name, value, fullName = name) ->
       response = {}
 
       if regexp.simple.test(name)
         response[name] = value
 
       else if matches = name.match(regexp.array)
-        name = matches[2].replace("]", "")
+        cleanName = matches[2].replace("]", "")
 
-        response[matches[1]] =
-          if name == "" then [value]
-          else @serializeField(name, value)
+        if cleanName == ""
+          @arrays[fullName] ?= []
+          @arrays[fullName].push(value)
+          response[matches[1]] = @arrays[fullName]
+        else
+          response[matches[1]] = @serializeField(cleanName, value, name)
 
       response
 

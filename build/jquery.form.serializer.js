@@ -13,16 +13,28 @@
     Serializer = (function() {
       function Serializer($this) {
         this.$this = $this;
+        this.arrays = {};
       }
 
-      Serializer.prototype.serializeField = function(name, value) {
-        var matches, response;
+      Serializer.prototype.serializeField = function(name, value, fullName) {
+        var cleanName, matches, response, _base;
+        if (fullName == null) {
+          fullName = name;
+        }
         response = {};
         if (regexp.simple.test(name)) {
           response[name] = value;
         } else if (matches = name.match(regexp.array)) {
-          name = matches[2].replace("]", "");
-          response[matches[1]] = name === "" ? [value] : this.serializeField(name, value);
+          cleanName = matches[2].replace("]", "");
+          if (cleanName === "") {
+            if ((_base = this.arrays)[fullName] == null) {
+              _base[fullName] = [];
+            }
+            this.arrays[fullName].push(value);
+            response[matches[1]] = this.arrays[fullName];
+          } else {
+            response[matches[1]] = this.serializeField(cleanName, value, name);
+          }
         }
         return response;
       };
