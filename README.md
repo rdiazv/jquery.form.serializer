@@ -11,8 +11,8 @@ By default the serialization it's based on the submittable fields according to [
 Include `jquery.form.serializer.js` after `jquery.js`.
 
 ```html
-<script src="jquery.js"></script>
-<script src="jquery.form.serializer.js"></script>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="jquery.form.serializer.js"></script>
 ```
 
 ## Usage
@@ -164,7 +164,7 @@ Value castings allows you to preprocess a field value before serializing it. The
 $.fn.getSerializedForm.castings = {
   boolean: function() {
     if ($(this).is(":checkbox") && !$(this).attr("value")) {
-      $(this).prop("checked");
+      return $(this).prop("checked");
     }
   }
 };
@@ -189,7 +189,7 @@ $("#my-form").getSerializedForm({
   castings: {
     numericField: function() {
       if ($(this).hasClass("numeric")) {
-        parseInt($(this).val());
+        return parseInt($(this).val());
       }
     }
   }
