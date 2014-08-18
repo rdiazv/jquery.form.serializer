@@ -9,10 +9,10 @@ By default the serialization it's based on the submittable fields according to [
 
 Include `jquery.form.serializer.js` after `jquery.js`.
 
-<!--```html
+```html
 <script src="jquery.js"></script>
 <script src="jquery.form.serializer.js"></script>
-```-->
+```
 
 ## Usage
 
