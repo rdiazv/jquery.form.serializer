@@ -4,8 +4,7 @@
     var Serializer, regexp, selectors;
     regexp = {
       simple: /^[a-z][\w-:\.]*$/i,
-      array: /^([a-z][\w-:\.]*)\[\]$/i,
-      named: /^([a-z][\w-:\.]*)\[(.+)\]$/i
+      array: /^([a-z][\w-:\.]*)\[(.*\])$/i
     };
     selectors = {
       submittable: 'input, select, textarea',
@@ -22,10 +21,8 @@
         if (regexp.simple.test(name)) {
           response[name] = value;
         } else if (matches = name.match(regexp.array)) {
-          response[matches[1]] = [value];
-        } else if (matches = name.match(regexp.named)) {
-          response[matches[1]] = {};
-          response[matches[1]][matches[2]] = value;
+          name = matches[2].replace("]", "");
+          response[matches[1]] = name === "" ? [value] : this.serializeField(name, value);
         }
         return response;
       };

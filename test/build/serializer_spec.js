@@ -46,12 +46,23 @@
             return expect(value).to.have.key('emails');
           });
         });
-        return it('should return a json object', function() {
+        it('should return a json object', function() {
           var value;
           value = this.serializer.serializeField('emails[john]', 'john@email.com');
           return expect(value).to.eql({
             emails: {
               john: 'john@email.com'
+            }
+          });
+        });
+        return it('should handle nested attributes', function() {
+          var value;
+          value = this.serializer.serializeField('emails[john][current]', 'john@email.com');
+          return expect(value).to.eql({
+            emails: {
+              john: {
+                current: 'john@email.com'
+              }
             }
           });
         });

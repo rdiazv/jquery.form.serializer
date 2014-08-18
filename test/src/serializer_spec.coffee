@@ -37,6 +37,13 @@ describe '$.fn.getSerializedForm.Serializer', ->
           emails:
             john: 'john@email.com'
 
+      it 'should handle nested attributes', ->
+        value = @serializer.serializeField('emails[john][current]', 'john@email.com')
+        expect(value).to.eql
+          emails:
+            john:
+              current: 'john@email.com'
+
   describe '.getSubmittableFieldValues()', ->
     beforeEach ->
       $form = $ """

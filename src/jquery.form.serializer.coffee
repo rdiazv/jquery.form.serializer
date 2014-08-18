@@ -6,8 +6,7 @@
 
   regexp =
     simple: /^[a-z][\w-:\.]*$/i
-    array: /^([a-z][\w-:\.]*)\[\]$/i
-    named: /^([a-z][\w-:\.]*)\[(.+)\]$/i
+    array: /^([a-z][\w-:\.]*)\[(.*\])$/i
 
   selectors =
     submittable: 'input, select, textarea'
@@ -24,11 +23,11 @@
         response[name] = value
 
       else if matches = name.match(regexp.array)
-        response[matches[1]] = [value]
+        name = matches[2].replace("]", "")
 
-      else if matches = name.match(regexp.named)
-        response[matches[1]] = {}
-        response[matches[1]][matches[2]] = value
+        response[matches[1]] =
+          if name == "" then [value]
+          else @serializeField(name, value)
 
       response
 
