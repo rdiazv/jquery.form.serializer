@@ -5,12 +5,28 @@
       return this.serializer = new $.fn.getSerializedForm.Serializer;
     });
     return describe('.serializeField(name, value)', function() {
-      return context('if the name is a simple field name', function() {
-        return it('should return a plain json', function() {
+      context('if the name is a simple field name', function() {
+        return it('should return a plain value', function() {
           var value;
           value = this.serializer.serializeField('email', 'test@email.com');
           return expect(value).to.eql({
             email: 'test@email.com'
+          });
+        });
+      });
+      return context('if the name is an array field name', function() {
+        context('the key', function() {
+          return it('should not contain the brackets', function() {
+            var value;
+            value = this.serializer.serializeField('emails[]', 'test@email.com');
+            return expect(value).to.have.key('emails');
+          });
+        });
+        return it('should return an array', function() {
+          var value;
+          value = this.serializer.serializeField('emails[]', 'test@email.com');
+          return expect(value).to.eql({
+            emails: ['test@email.com']
           });
         });
       });

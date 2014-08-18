@@ -11,7 +11,14 @@
   class Serializer
     serializeField: (name, value) ->
       response = {}
-      response[name] = value if regexp.simple.test(name)
+
+      if regexp.simple.test(name)
+        response[name] = value
+
+      else if regexp.array.test(name)
+        name = name.substring(0, name.length - 2)
+        response[name] = [value]
+
       response
 
   $.fn.getSerializedForm = (options = {}) ->

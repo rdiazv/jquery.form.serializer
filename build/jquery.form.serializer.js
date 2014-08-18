@@ -14,6 +14,9 @@
         response = {};
         if (regexp.simple.test(name)) {
           response[name] = value;
+        } else if (regexp.array.test(name)) {
+          name = name.substring(0, name.length - 2);
+          response[name] = [value];
         }
         return response;
       };
