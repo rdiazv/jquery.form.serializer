@@ -65,13 +65,19 @@
         return response;
       };
 
-      Serializer.prototype.getSubmittableFieldValues = function() {
+      Serializer.prototype.getSubmittableFieldValues = function(options) {
         var $submittable, fields, filter, _, _ref;
+        options = $.extend(true, {}, {
+          submittable: submittable
+        }, options);
         fields = [];
-        $submittable = this.$this.find(submittable.selector).filter("[name]");
-        _ref = submittable.filters;
+        $submittable = this.$this.find(options.submittable.selector).filter("[name]");
+        _ref = options.submittable.filters;
         for (_ in _ref) {
           filter = _ref[_];
+          if (filter === false || (filter == null)) {
+            continue;
+          }
           $submittable = $submittable.filter(filter);
         }
         $submittable.each(function() {
@@ -82,10 +88,13 @@
         return fields;
       };
 
-      Serializer.prototype.serialize = function() {
+      Serializer.prototype.serialize = function(options) {
         var field, fields, values, _i, _len;
+        if (options == null) {
+          options = {};
+        }
         values = {};
-        fields = this.getSubmittableFieldValues();
+        fields = this.getSubmittableFieldValues(options);
         for (_i = 0, _len = fields.length; _i < _len; _i++) {
           field = fields[_i];
           $.extend(true, values, this.serializeField(field[0], field[1]));
@@ -96,8 +105,11 @@
       return Serializer;
 
     })();
-    $.fn.getSerializedForm = function() {
-      return new $.fn.getSerializedForm.Serializer(this.first()).serialize();
+    $.fn.getSerializedForm = function(options) {
+      if (options == null) {
+        options = {};
+      }
+      return new $.fn.getSerializedForm.Serializer(this.first()).serialize(options);
     };
     $.fn.getSerializedForm.regexp = regexp;
     $.fn.getSerializedForm.submittable = submittable;

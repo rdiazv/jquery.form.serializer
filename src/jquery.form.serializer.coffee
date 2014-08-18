@@ -54,12 +54,14 @@
 
       response
 
-    getSubmittableFieldValues: ->
+    getSubmittableFieldValues: (options) ->
+      options = $.extend(true, {}, submittable: submittable, options)
       fields = []
 
-      $submittable = @$this.find(submittable.selector).filter("[name]")
+      $submittable = @$this.find(options.submittable.selector).filter("[name]")
 
-      for _, filter of submittable.filters
+      for _, filter of options.submittable.filters
+        continue if filter == false or not filter?
         $submittable = $submittable.filter(filter)
 
       $submittable.each ->
@@ -68,17 +70,17 @@
 
       fields
 
-    serialize: ->
+    serialize: (options = {}) ->
       values = {}
-      fields = @getSubmittableFieldValues()
+      fields = @getSubmittableFieldValues(options)
 
       for field in fields
         $.extend(true, values, @serializeField(field[0], field[1]))
 
       values
 
-  $.fn.getSerializedForm = ->
-    new $.fn.getSerializedForm.Serializer(@first()).serialize()
+  $.fn.getSerializedForm = (options = {}) ->
+    new $.fn.getSerializedForm.Serializer(@first()).serialize(options)
 
   $.fn.getSerializedForm.regexp = regexp
   $.fn.getSerializedForm.submittable = submittable

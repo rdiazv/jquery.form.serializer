@@ -1,6 +1,7 @@
 
 describe '$.fn.getSerializedForm.Serializer', ->
   beforeEach ->
+    @sandbox = sinon.sandbox.create()
     @$form = $ """
       <form>
         <input type="hidden" name="token" value="ABC" />
@@ -17,6 +18,9 @@ describe '$.fn.getSerializedForm.Serializer', ->
         <input type="checkbox" name="user[skills][]" value="CSS" checked />
       </form>
       """
+
+  afterEach ->
+    @sandbox.restore()
 
   describe 'constructor($this)', ->
     it 'should save the element as an instance variable', ->
@@ -67,7 +71,7 @@ describe '$.fn.getSerializedForm.Serializer', ->
             john:
               current: 'john@email.com'
 
-  describe '.getSubmittableFieldValues()', ->
+  describe '.getSubmittableFieldValues(options)', ->
     beforeEach ->
       @serializer = new $.fn.getSerializedForm.Serializer(@$form)
 
@@ -92,7 +96,20 @@ describe '$.fn.getSerializedForm.Serializer', ->
       fields = @serializer.getSubmittableFieldValues()
       expect(fields).to.eql [["test", "valid"]]
 
-  describe '.serialize()', ->
+    it 'should be customizable by passing options', ->
+      @$form.html """
+        <input type="text" name="test1" value="enabled" />
+        <input type="text" name="test2" value="disabled" disabled />
+        """
+
+      fields = @serializer.getSubmittableFieldValues
+        submittable:
+          filters:
+            enabled: false
+
+      expect(fields).to.eql [["test1", "enabled"], ["test2", "disabled"]]
+
+  describe '.serialize(options = {})', ->
     beforeEach ->
       @serializer = new $.fn.getSerializedForm.Serializer(@$form)
 
@@ -105,3 +122,13 @@ describe '$.fn.getSerializedForm.Serializer', ->
           country: "CL"
           gender: "male"
           skills: ["JS", "CSS"]
+
+    it 'should pass the options to getSubmittableFieldValues', ->
+      @sandbox.spy $.fn.getSerializedForm.Serializer.prototype, "getSubmittableFieldValues"
+
+      options = { option1: 1 }
+
+      @serializer.serialize(options)
+
+      expect($.fn.getSerializedForm.Serializer::getSubmittableFieldValues).to
+        .have.been.calledWith(options)
