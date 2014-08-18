@@ -121,9 +121,6 @@ describe '$.fn.getSerializedForm.Serializer', ->
           get: (el) ->
             $(el).data("value")
 
-          set: (el, value) ->
-            $(el).data("value": value)
-
       afterEach ->
         delete $.valHooks.custom_control
 

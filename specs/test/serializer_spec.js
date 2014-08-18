@@ -154,11 +154,6 @@
           return $.valHooks.custom_control = {
             get: function(el) {
               return $(el).data("value");
-            },
-            set: function(el, value) {
-              return $(el).data({
-                "value": value
-              });
             }
           };
         });
