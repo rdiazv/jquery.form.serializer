@@ -5,7 +5,7 @@
 # @copyright 2014, Rodrigo Díaz V. <rdiazv89@gmail.com>
 # @link https://github.com/rdiazv/jquery.form.serializer
 # @license MIT
-# @version 1.0.1
+# @version 1.1.0
 ###
 
 (($) ->
@@ -32,7 +32,7 @@
           true
 
   castings =
-    boolean: ->
+    booleanCheckbox: ->
       if $(this).is(":checkbox") and not $(this).attr("value")
         $(this).prop("checked")
 
@@ -86,7 +86,7 @@
             value = castedValue
             break
 
-        fields.push([name, value])
+        fields.push(name: name, value: value)
 
       fields
 
@@ -95,7 +95,7 @@
       fields = @getSubmittableFieldValues(options)
 
       for field in fields
-        $.extend(true, values, @serializeField(field[0], field[1]))
+        $.extend(true, values, @serializeField(field.name, field.value))
 
       values
 

@@ -1,0 +1,37 @@
+{
+  "name": "jquery.form.serializer",
+  "version": "1.1.0",
+  "description": "Simple and powerful form serializations with jQuery",
+  "main": "jquery.form.serializer.js",
+  "dependencies": {
+    "uglify-js": "~2.4.15",
+    "mocha": "1.21.x",
+    "sinon": "1.10.x",
+    "chai": "1.9.x",
+    "sinon-chai": "2.5.x",
+    "jquery": "2.1.x",
+    "jsdom": "0.11.x"
+  },
+  "scripts": {
+    "test": "mocha --require specs/support/spec_helper.js specs/test",
+    "minify": "uglifyjs jquery.form.serializer.js -m -c --comments > jquery.form.serializer.min.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/rdiazv/jquery.form.serializer.git"
+  },
+  "keywords": [
+    "form",
+    "serialize",
+    "json",
+    "fields",
+    "html",
+    "ajax"
+  ],
+  "author": "Rodrigo Díaz V.",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rdiazv/jquery.form.serializer/issues"
+  },
+  "homepage": "https://github.com/rdiazv/jquery.form.serializer"
+}

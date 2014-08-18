@@ -98,10 +98,7 @@ You can easily integrate any custom control for serialization. For example, give
 
 ```html
 <form id="my-form">
-  <div class="custom-control"
-    name="my-custom-control"
-    data-custom-value="my value">
-  </div>
+  <div class="custom-control" name="my-custom-control" data-custom-value="my value"></div>
 </form>
 ```
 
@@ -162,7 +159,7 @@ Value castings allows you to preprocess a field value before serializing it. The
 
 ```javascript
 $.fn.getSerializedForm.castings = {
-  boolean: function() {
+  booleanCheckbox: function() {
     if ($(this).is(":checkbox") && !$(this).attr("value")) {
       return $(this).prop("checked");
     }
@@ -200,4 +197,4 @@ $("#my-form").getSerializedForm({
 
 ## Tests
 
-Open `./test/index.html` on any browser.
+Open `./test/index.html` on any browser, or if you have [Node.js](http://nodejs.org/) installed, run `npm install` and `npm test`.

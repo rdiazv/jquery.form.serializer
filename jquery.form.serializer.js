@@ -6,7 +6,7 @@
  * @copyright 2014, Rodrigo Díaz V. <rdiazv89@gmail.com>
  * @link https://github.com/rdiazv/jquery.form.serializer
  * @license MIT
- * @version 1.0.1
+ * @version 1.1.0
  */
 
 (function() {
@@ -37,7 +37,7 @@
       }
     };
     castings = {
-      boolean: function() {
+      booleanCheckbox: function() {
         if ($(this).is(":checkbox") && !$(this).attr("value")) {
           return $(this).prop("checked");
         }
@@ -104,7 +104,10 @@
               break;
             }
           }
-          return fields.push([name, value]);
+          return fields.push({
+            name: name,
+            value: value
+          });
         });
         return fields;
       };
@@ -118,7 +121,7 @@
         fields = this.getSubmittableFieldValues(options);
         for (_i = 0, _len = fields.length; _i < _len; _i++) {
           field = fields[_i];
-          $.extend(true, values, this.serializeField(field[0], field[1]));
+          $.extend(true, values, this.serializeField(field.name, field.value));
         }
         return values;
       };

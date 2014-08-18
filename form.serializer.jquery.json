@@ -1,6 +1,6 @@
 {
   "name": "form.serializer",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "title": "jQuery Form Serializer",
   "description": "Simple and powerful form serializations with jQuery",
   "homepage": "https://github.com/rdiazv/jquery.form.serializer",
