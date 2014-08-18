@@ -21,7 +21,7 @@
 
   selectors =
     submittable: 'input, select, textarea'
-    submittableFilter: '[name]:not(:disabled)'
+    submittableFilter: ':enabled'
 
   class Serializer
     constructor: ($this) ->
@@ -50,6 +50,7 @@
       fields = []
 
       @$this.find(selectors.submittable)
+        .filter("[name]")
         .filter(selectors.submittableFilter).each ->
           name = $(this).attr('name')
           fields.push([name, $(this).val()])

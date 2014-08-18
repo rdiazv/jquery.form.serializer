@@ -80,6 +80,15 @@ describe '$.fn.getSerializedForm.Serializer', ->
         ["named_field[array2][]", "array_value3"]
       ]
 
+    it 'should ignore fields without a name', ->
+      @$form.html """
+        <input type="text" name="test" value="valid" />
+        <input type="text" value="invalid" />
+        """
+
+      fields = @serializer.getSubmittableFieldValues()
+      expect(fields).to.eql [["test", "valid"]]
+
   describe '.serialize()', ->
     beforeEach ->
       @serializer = new $.fn.getSerializedForm.Serializer(@$form)

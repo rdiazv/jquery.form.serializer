@@ -83,10 +83,16 @@
       beforeEach(function() {
         return this.serializer = new $.fn.getSerializedForm.Serializer(this.$form);
       });
-      return it('should return all submittable fields as a key, value pairs array', function() {
+      it('should return all submittable fields as a key, value pairs array', function() {
         var fields;
         fields = this.serializer.getSubmittableFieldValues();
         return expect(fields).to.eql([["simple_field", "simple_value"], ["array_field[]", "array_value1"], ["array_field[]", "array_value2"], ["named_field[named1]", "named_value1"], ["named_field[named2]", "named_value2"], ["named_field[array1][]", "array_value1"], ["named_field[array1][]", "array_value2"], ["named_field[array2][]", "array_value3"]]);
+      });
+      return it('should ignore fields without a name', function() {
+        var fields;
+        this.$form.html("<input type=\"text\" name=\"test\" value=\"valid\" />\n<input type=\"text\" value=\"invalid\" />");
+        fields = this.serializer.getSubmittableFieldValues();
+        return expect(fields).to.eql([["test", "valid"]]);
       });
     });
     return describe('.serialize()', function() {

@@ -23,7 +23,7 @@
     };
     selectors = {
       submittable: 'input, select, textarea',
-      submittableFilter: '[name]:not(:disabled)'
+      submittableFilter: ':enabled'
     };
     Serializer = (function() {
       function Serializer($this) {
@@ -57,7 +57,7 @@
       Serializer.prototype.getSubmittableFieldValues = function() {
         var fields;
         fields = [];
-        this.$this.find(selectors.submittable).filter(selectors.submittableFilter).each(function() {
+        this.$this.find(selectors.submittable).filter("[name]").filter(selectors.submittableFilter).each(function() {
           var name;
           name = $(this).attr('name');
           return fields.push([name, $(this).val()]);
