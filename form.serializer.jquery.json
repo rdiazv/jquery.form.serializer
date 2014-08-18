@@ -1,0 +1,44 @@
+{
+  "name": "form.serializer",
+  "version": "1.0.0",
+  "title": "jQuery Form Serializer",
+  "description": "Simple and powerful form serializations with jQuery",
+  "main": "./build/jquery.form.serializer.js",
+  "scripts": {
+    "test": "open ./test/test.html",
+    "build": "npm run-script minify",
+    "minify": "uglifyjs jquery.serialize-object.js -m -c --comments > jquery.serialize-object.min.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rdiazv/jquery.form.serializer"
+  },
+  "keywords": [
+    "form",
+    "serialize",
+    "json",
+    "fields",
+    "html",
+    "ajax"
+  ],
+  "plugin": {
+    "type": "jQuery",
+    "name": "jQuery getSerializedForm"
+  },
+  "author": {
+    "name": "Rodrigo Díaz V.",
+    "email": "rdiazv89@gmail.com"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://opensource.org/licenses/MIT"
+    }
+  ],
+  "bugs": {
+    "url": "https://github.com/rdiazv/jquery.form.serializer/issues"
+  },
+  "dependencies": {
+    "jquery": ">=1.0"
+  }
+}
