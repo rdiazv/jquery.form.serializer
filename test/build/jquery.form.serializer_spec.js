@@ -14,6 +14,7 @@
       it('should create an instance of Serializer passing the first form in the matching set', function() {
         var $forms, form1, form2;
         this.sandbox.spy($.fn.getSerializedForm, 'Serializer');
+        this.sandbox.stub($.fn.getSerializedForm.Serializer.prototype, "serialize");
         form1 = $("<form/>").get(0);
         form2 = $("<form/>").get(0);
         $forms = $();
