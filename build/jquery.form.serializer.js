@@ -3,9 +3,9 @@
   (function($) {
     var Serializer, regexp;
     regexp = {
-      simple: /^[a-zA-Z][a-zA-Z0-9-_:\.]*$/,
-      array: /^([a-zA-Z][a-zA-Z0-9-_:\.]*)\[\]$/,
-      named: /^([a-zA-Z][a-zA-Z0-9-_:\.]*)\[(.+)\]$/
+      simple: /^[a-z][\w-:\.]*$/i,
+      array: /^([a-z][\w-:\.]*)\[\]$/i,
+      named: /^([a-z][\w-:\.]*)\[(.+)\]$/i
     };
     Serializer = (function() {
       function Serializer($this) {
