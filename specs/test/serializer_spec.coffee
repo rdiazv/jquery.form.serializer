@@ -1,5 +1,5 @@
 
-describe '$.fn.getSerializedForm.Serializer', ->
+describe '$.jQueryFormSerializer.Serializer', ->
   beforeEach ->
     @sandbox = sinon.sandbox.create()
     @$form = $ """
@@ -28,12 +28,12 @@ describe '$.fn.getSerializedForm.Serializer', ->
   describe 'constructor($this)', ->
     it 'should save the element as an instance variable', ->
       $this = $()
-      serializer = new $.fn.getSerializedForm.Serializer($this)
+      serializer = new $.jQueryFormSerializer.Serializer($this)
       expect(serializer.$this).to.eq($this)
 
   describe '._serializeField(name, value)', ->
     beforeEach ->
-      @serializer = new $.fn.getSerializedForm.Serializer
+      @serializer = new $.jQueryFormSerializer.Serializer
 
     context 'if the name is a simple field name', ->
       it 'should return a plain value', ->
@@ -76,7 +76,7 @@ describe '$.fn.getSerializedForm.Serializer', ->
 
   describe '._getSubmittableFieldValues(options)', ->
     beforeEach ->
-      @serializer = new $.fn.getSerializedForm.Serializer(@$form)
+      @serializer = new $.jQueryFormSerializer.Serializer(@$form)
 
     it 'should return all submittable fields as a name, value json array', ->
       fields = @serializer._getSubmittableFieldValues()
@@ -133,7 +133,7 @@ describe '$.fn.getSerializedForm.Serializer', ->
 
         fields = @serializer._getSubmittableFieldValues
           submittable:
-            selector: "#{$.fn.getSerializedForm.submittable.selector}, .custom-control"
+            selector: "#{$.jQueryFormSerializer.submittable.selector}, .custom-control"
 
         expect(fields).to.eql [name: "custom", value: "my value"]
 
@@ -167,7 +167,7 @@ describe '$.fn.getSerializedForm.Serializer', ->
 
   describe '.toJSON(options = {})', ->
     beforeEach ->
-      @serializer = new $.fn.getSerializedForm.Serializer(@$form)
+      @serializer = new $.jQueryFormSerializer.Serializer(@$form)
 
     it 'should return a json with all the submittable field values serialized', ->
       expect(@serializer.toJSON()).to.eql
@@ -181,11 +181,11 @@ describe '$.fn.getSerializedForm.Serializer', ->
           skills: ["JS", "CSS"]
 
     it 'should pass the options to _getSubmittableFieldValues', ->
-      @sandbox.spy $.fn.getSerializedForm.Serializer.prototype, "_getSubmittableFieldValues"
+      @sandbox.spy $.jQueryFormSerializer.Serializer.prototype, "_getSubmittableFieldValues"
 
       options = { option1: 1 }
 
       @serializer.toJSON(options)
 
-      expect($.fn.getSerializedForm.Serializer::_getSubmittableFieldValues).to
+      expect($.jQueryFormSerializer.Serializer::_getSubmittableFieldValues).to
         .have.been.calledWith(options)

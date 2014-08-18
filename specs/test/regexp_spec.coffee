@@ -1,8 +1,8 @@
 
-describe '$.fn.getSerializedForm.regexp', ->
+describe '$.jQueryFormSerializer.regexp', ->
   describe 'simple', ->
     beforeEach ->
-      @regexp = $.fn.getSerializedForm.regexp.simple
+      @regexp = $.jQueryFormSerializer.regexp.simple
 
     it 'should match against simple field names', ->
       expect('simple_field').to.match(@regexp)
@@ -12,7 +12,7 @@ describe '$.fn.getSerializedForm.regexp', ->
 
   describe 'array', ->
     beforeEach ->
-      @regexp = $.fn.getSerializedForm.regexp.array
+      @regexp = $.jQueryFormSerializer.regexp.array
 
     it 'should match against array field names', ->
       expect('array_field[]').to.match(@regexp)

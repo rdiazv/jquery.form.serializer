@@ -104,11 +104,12 @@
       values
 
   $.fn.getSerializedForm = (options = {}) ->
-    new $.fn.getSerializedForm.Serializer(@first()).toJSON(options)
+    new $.jQueryFormSerializer.Serializer(@first()).toJSON(options)
 
-  $.fn.getSerializedForm.regexp = regexp
-  $.fn.getSerializedForm.submittable = submittable
-  $.fn.getSerializedForm.castings = castings
-  $.fn.getSerializedForm.Serializer = Serializer
+  $.jQueryFormSerializer =
+    regexp: regexp
+    submittable: submittable
+    castings: castings
+    Serializer: Serializer
 
 )(jQuery)

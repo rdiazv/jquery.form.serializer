@@ -137,12 +137,14 @@
       if (options == null) {
         options = {};
       }
-      return new $.fn.getSerializedForm.Serializer(this.first()).toJSON(options);
+      return new $.jQueryFormSerializer.Serializer(this.first()).toJSON(options);
     };
-    $.fn.getSerializedForm.regexp = regexp;
-    $.fn.getSerializedForm.submittable = submittable;
-    $.fn.getSerializedForm.castings = castings;
-    return $.fn.getSerializedForm.Serializer = Serializer;
+    return $.jQueryFormSerializer = {
+      regexp: regexp,
+      submittable: submittable,
+      castings: castings,
+      Serializer: Serializer
+    };
   })(jQuery);
 
 }).call(this);

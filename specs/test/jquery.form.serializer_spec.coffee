@@ -12,8 +12,8 @@ describe 'jquery.form.serializer', ->
   describe '.getSerializedForm()', ->
     it 'should create an instance of Serializer passing the first form in the
     matching set', ->
-      @sandbox.spy($.fn.getSerializedForm, 'Serializer')
-      @sandbox.stub($.fn.getSerializedForm.Serializer.prototype, "toJSON")
+      @sandbox.spy($.jQueryFormSerializer, 'Serializer')
+      @sandbox.stub($.jQueryFormSerializer.Serializer.prototype, "toJSON")
 
       form1 = $("<form/>").get(0)
       form2 = $("<form/>").get(0)
@@ -24,11 +24,11 @@ describe 'jquery.form.serializer', ->
 
       $forms.getSerializedForm()
 
-      expect($.fn.getSerializedForm.Serializer).to.have.been.calledOnce
-      expect($.fn.getSerializedForm.Serializer.getCall(0).args[0].get(0)).to.eq(form1)
+      expect($.jQueryFormSerializer.Serializer).to.have.been.calledOnce
+      expect($.jQueryFormSerializer.Serializer.getCall(0).args[0].get(0)).to.eq(form1)
 
     it 'should return the toJSON function response', ->
-      @sandbox.stub($.fn.getSerializedForm.Serializer.prototype, "toJSON")
+      @sandbox.stub($.jQueryFormSerializer.Serializer.prototype, "toJSON")
         .returns("test response")
 
       expect($().getSerializedForm()).to.eql("test response")
