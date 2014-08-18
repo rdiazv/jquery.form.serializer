@@ -14,7 +14,7 @@
           });
         });
       });
-      return context('if the name is an array field name', function() {
+      context('if the name is an array field name', function() {
         context('the key', function() {
           return it('should not contain the brackets', function() {
             var value;
@@ -27,6 +27,24 @@
           value = this.serializer.serializeField('emails[]', 'test@email.com');
           return expect(value).to.eql({
             emails: ['test@email.com']
+          });
+        });
+      });
+      return context('if the name is a named array field name', function() {
+        context('the key', function() {
+          return it('should not contain the brackets', function() {
+            var value;
+            value = this.serializer.serializeField('emails[john]', 'john@email.com');
+            return expect(value).to.have.key('emails');
+          });
+        });
+        return it('should return a json object', function() {
+          var value;
+          value = this.serializer.serializeField('emails[john]', 'john@email.com');
+          return expect(value).to.eql({
+            emails: {
+              john: 'john@email.com'
+            }
           });
         });
       });

@@ -4,20 +4,22 @@
     var Serializer, regexp;
     regexp = {
       simple: /^[a-zA-Z][a-zA-Z0-9-_:\.]*$/,
-      array: /^[a-zA-Z][a-zA-Z0-9-_:\.]*\[\]$/,
-      named: /^[a-zA-Z][a-zA-Z0-9-_:\.]*\[.+\]$/
+      array: /^([a-zA-Z][a-zA-Z0-9-_:\.]*)\[\]$/,
+      named: /^([a-zA-Z][a-zA-Z0-9-_:\.]*)\[(.+)\]$/
     };
     Serializer = (function() {
       function Serializer() {}
 
       Serializer.prototype.serializeField = function(name, value) {
-        var response;
+        var matches, response;
         response = {};
         if (regexp.simple.test(name)) {
           response[name] = value;
-        } else if (regexp.array.test(name)) {
-          name = name.substring(0, name.length - 2);
-          response[name] = [value];
+        } else if (matches = name.match(regexp.array)) {
+          response[matches[1]] = [value];
+        } else if (matches = name.match(regexp.named)) {
+          response[matches[1]] = {};
+          response[matches[1]][matches[2]] = value;
         }
         return response;
       };
