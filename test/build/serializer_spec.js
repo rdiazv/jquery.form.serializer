@@ -87,16 +87,47 @@
       beforeEach(function() {
         return this.serializer = new $.fn.getSerializedForm.Serializer(this.$form);
       });
-      it('should return all submittable fields as a key, value pairs array', function() {
+      it('should return all submittable fields as a name, value json array', function() {
         var fields;
         fields = this.serializer.getSubmittableFieldValues();
-        return expect(fields).to.eql([["token", "ABC"], ["user[name]", "John Doe"], ["user[email]", "john@email.com"], ["user[newsletter]", true], ["user[country]", "CL"], ["user[gender]", "male"], ["user[skills][]", "JS"], ["user[skills][]", "CSS"]]);
+        return expect(fields).to.eql([
+          {
+            name: "token",
+            value: "ABC"
+          }, {
+            name: "user[name]",
+            value: "John Doe"
+          }, {
+            name: "user[email]",
+            value: "john@email.com"
+          }, {
+            name: "user[newsletter]",
+            value: true
+          }, {
+            name: "user[country]",
+            value: "CL"
+          }, {
+            name: "user[gender]",
+            value: "male"
+          }, {
+            name: "user[skills][]",
+            value: "JS"
+          }, {
+            name: "user[skills][]",
+            value: "CSS"
+          }
+        ]);
       });
       it('should ignore fields without a name', function() {
         var fields;
         this.$form.html("<input type=\"text\" name=\"test\" value=\"valid\" />\n<input type=\"text\" value=\"invalid\" />");
         fields = this.serializer.getSubmittableFieldValues();
-        return expect(fields).to.eql([["test", "valid"]]);
+        return expect(fields).to.eql([
+          {
+            name: "test",
+            value: "valid"
+          }
+        ]);
       });
       it('should be customizable by passing options', function() {
         var fields;
@@ -108,7 +139,15 @@
             }
           }
         });
-        return expect(fields).to.eql([["test1", "enabled"], ["test2", "disabled"]]);
+        return expect(fields).to.eql([
+          {
+            name: "test1",
+            value: "enabled"
+          }, {
+            name: "test2",
+            value: "disabled"
+          }
+        ]);
       });
       context('working with custom controls', function() {
         beforeEach(function() {
@@ -139,7 +178,12 @@
               selector: "" + $.fn.getSerializedForm.submittable.selector + ", .custom-control"
             }
           });
-          return expect(fields).to.eql([["custom", "my value"]]);
+          return expect(fields).to.eql([
+            {
+              name: "custom",
+              value: "my value"
+            }
+          ]);
         });
       });
       return it('should call value castings on every field', function() {
@@ -154,7 +198,15 @@
             }
           }
         });
-        return expect(fields).to.eql([["field1", 123], ["field2", "123"]]);
+        return expect(fields).to.eql([
+          {
+            name: "field1",
+            value: 123
+          }, {
+            name: "field2",
+            value: "123"
+          }
+        ]);
       });
     });
     return describe('.serialize(options = {})', function() {

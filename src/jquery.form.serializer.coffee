@@ -86,7 +86,7 @@
             value = castedValue
             break
 
-        fields.push([name, value])
+        fields.push(name: name, value: value)
 
       fields
 
@@ -95,7 +95,7 @@
       fields = @getSubmittableFieldValues(options)
 
       for field in fields
-        $.extend(true, values, @serializeField(field[0], field[1]))
+        $.extend(true, values, @serializeField(field.name, field.value))
 
       values
 

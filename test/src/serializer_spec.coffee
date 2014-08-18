@@ -77,17 +77,17 @@ describe '$.fn.getSerializedForm.Serializer', ->
     beforeEach ->
       @serializer = new $.fn.getSerializedForm.Serializer(@$form)
 
-    it 'should return all submittable fields as a key, value pairs array', ->
+    it 'should return all submittable fields as a name, value json array', ->
       fields = @serializer.getSubmittableFieldValues()
       expect(fields).to.eql [
-        ["token", "ABC" ],
-        ["user[name]", "John Doe"],
-        ["user[email]", "john@email.com"],
-        ["user[newsletter]", true],
-        ["user[country]", "CL"],
-        ["user[gender]", "male"],
-        ["user[skills][]", "JS"],
-        ["user[skills][]", "CSS"],
+        { name: "token", value: "ABC" },
+        { name: "user[name]", value: "John Doe" },
+        { name: "user[email]", value: "john@email.com" },
+        { name: "user[newsletter]", value: true },
+        { name: "user[country]", value: "CL" },
+        { name: "user[gender]", value: "male" },
+        { name: "user[skills][]", value: "JS" },
+        { name: "user[skills][]", value: "CSS" }
       ]
 
     it 'should ignore fields without a name', ->
@@ -97,7 +97,7 @@ describe '$.fn.getSerializedForm.Serializer', ->
         """
 
       fields = @serializer.getSubmittableFieldValues()
-      expect(fields).to.eql [["test", "valid"]]
+      expect(fields).to.eql [name: "test", value: "valid"]
 
     it 'should be customizable by passing options', ->
       @$form.html """
@@ -110,7 +110,10 @@ describe '$.fn.getSerializedForm.Serializer', ->
           filters:
             enabled: false
 
-      expect(fields).to.eql [["test1", "enabled"], ["test2", "disabled"]]
+      expect(fields).to.eql [
+        { name: "test1", value: "enabled" }
+        { name: "test2", value: "disabled" }
+      ]
 
     context 'working with custom controls', ->
       beforeEach ->
@@ -134,7 +137,7 @@ describe '$.fn.getSerializedForm.Serializer', ->
           submittable:
             selector: "#{$.fn.getSerializedForm.submittable.selector}, .custom-control"
 
-        expect(fields).to.eql [["custom", "my value"]]
+        expect(fields).to.eql [name: "custom", value: "my value"]
 
     it 'should call value castings on every field', ->
       @$form.html """
@@ -148,7 +151,10 @@ describe '$.fn.getSerializedForm.Serializer', ->
             if $(this).hasClass("numeric")
               parseInt($(this).val())
 
-      expect(fields).to.eql [["field1", 123], ["field2", "123"]]
+      expect(fields).to.eql [
+        { name: "field1", value: 123 }
+        { name: "field2", value: "123" }
+      ]
 
   describe '.serialize(options = {})', ->
     beforeEach ->
