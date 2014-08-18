@@ -13,5 +13,4 @@ else if global?
   chai.use(sinonChai)
 
   global.$ = global.jQuery = require('jquery')
-  require('../../jquery.form.serializer')
 

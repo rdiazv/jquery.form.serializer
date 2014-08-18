@@ -10,10 +10,11 @@
     "chai": "1.9.x",
     "sinon-chai": "2.5.x",
     "jquery": "2.1.x",
-    "jsdom": "0.11.x"
+    "jsdom": "0.11.x",
+    "jscoverage": "0.5.x"
   },
   "scripts": {
-    "test": "mocha --require specs/support/spec_helper.js specs/test",
+    "test": "mocha --check-leaks --require specs/support/spec_helper.js --require jscoverage --require jquery.form.serializer.js --covignore=specs/.covignore --covout=detail --coverage=95,85,75 specs/test",
     "minify": "uglifyjs jquery.form.serializer.js -m -c --comments > jquery.form.serializer.min.js"
   },
   "repository": {
