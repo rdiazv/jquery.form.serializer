@@ -6,7 +6,7 @@
  * @copyright 2014, Rodrigo Díaz V. <rdiazv89@gmail.com>
  * @link https://github.com/rdiazv/jquery.form.serializer
  * @license MIT
- * @version 1.0.1
+ * @version 1.1.0
  */
 
 (function() {

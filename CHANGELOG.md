@@ -1,3 +1,9 @@
+1.1.0 (August 18, 2014)
+------------------------
+
+* Adding minified version.
+* Enabling cli testing via nodejs.
+
 1.0.1 (August 18, 2014)
 ------------------------
 
