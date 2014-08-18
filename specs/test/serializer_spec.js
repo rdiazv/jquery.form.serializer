@@ -181,7 +181,7 @@
           ]);
         });
       });
-      return it('should call value castings on every field', function() {
+      it('should call value castings on every field', function() {
         var fields;
         this.$form.html("<input type=\"text\" value=\"123\" name=\"field1\" class=\"numeric\" />\n<input type=\"text\" value=\"123\" name=\"field2\" />");
         fields = this.serializer.getSubmittableFieldValues({
@@ -200,6 +200,21 @@
           }, {
             name: "field2",
             value: "123"
+          }
+        ]);
+      });
+      return it('should allow to customize castings by passing options', function() {
+        var fields;
+        this.$form.html("<input type=\"checkbox\" name=\"test\" checked />");
+        fields = this.serializer.getSubmittableFieldValues({
+          castings: {
+            booleanCheckbox: false
+          }
+        });
+        return expect(fields).to.eql([
+          {
+            name: "test",
+            value: "on"
           }
         ]);
       });

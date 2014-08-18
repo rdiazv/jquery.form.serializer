@@ -154,6 +154,17 @@ describe '$.fn.getSerializedForm.Serializer', ->
         { name: "field2", value: "123" }
       ]
 
+    it 'should allow to customize castings by passing options', ->
+      @$form.html """
+        <input type="checkbox" name="test" checked />
+        """
+
+      fields = @serializer.getSubmittableFieldValues
+        castings:
+          booleanCheckbox: false
+
+      expect(fields).to.eql [{ name: "test", value: "on" }]
+
   describe '.serialize(options = {})', ->
     beforeEach ->
       @serializer = new $.fn.getSerializedForm.Serializer(@$form)
