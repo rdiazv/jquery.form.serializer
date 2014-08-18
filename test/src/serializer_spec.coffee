@@ -2,15 +2,19 @@
 describe '$.fn.getSerializedForm.Serializer', ->
   beforeEach ->
     @$form = $ """
-      <form action="/">
-        <input type="text" name="simple_field" value="simple_value" />
-        <input type="text" name="array_field[]" value="array_value1" />
-        <input type="text" name="array_field[]" value="array_value2" />
-        <input type="text" name="named_field[named1]" value="named_value1" />
-        <input type="text" name="named_field[named2]" value="named_value2" />
-        <input type="text" name="named_field[array1][]" value="array_value1" />
-        <input type="text" name="named_field[array1][]" value="array_value2" />
-        <input type="text" name="named_field[array2][]" value="array_value3" />
+      <form>
+        <input type="hidden" name="token" value="ABC" />
+        <input type="text" name="user[name]" value="John Doe" />
+        <input type="text" name="user[email]" value="john@email.com" />
+        <select name="user[country]">
+          <option value="CL" selected>Chile</option>
+        </select>
+        <input type="radio" name="user[gender]" value="male" checked />
+        <input type="radio" name="user[gender]" value="female" />
+        <input type="checkbox" name="user[skills][]" value="JS" checked />
+        <input type="checkbox" name="user[skills][]" value="C++" />
+        <input type="checkbox" name="user[skills][]" value="Java" />
+        <input type="checkbox" name="user[skills][]" value="CSS" checked />
       </form>
       """
 
@@ -70,14 +74,13 @@ describe '$.fn.getSerializedForm.Serializer', ->
     it 'should return all submittable fields as a key, value pairs array', ->
       fields = @serializer.getSubmittableFieldValues()
       expect(fields).to.eql [
-        ["simple_field", "simple_value" ],
-        ["array_field[]", "array_value1" ],
-        ["array_field[]", "array_value2" ],
-        ["named_field[named1]", "named_value1"],
-        ["named_field[named2]", "named_value2"],
-        ["named_field[array1][]", "array_value1"],
-        ["named_field[array1][]", "array_value2"],
-        ["named_field[array2][]", "array_value3"]
+        ["token", "ABC" ],
+        ["user[name]", "John Doe"],
+        ["user[email]", "john@email.com"],
+        ["user[country]", "CL"],
+        ["user[gender]", "male"],
+        ["user[skills][]", "JS"],
+        ["user[skills][]", "CSS"],
       ]
 
     it 'should ignore fields without a name', ->
@@ -95,10 +98,10 @@ describe '$.fn.getSerializedForm.Serializer', ->
 
     it 'should return a json with all the submittable field values serialized', ->
       expect(@serializer.serialize()).to.eql
-        simple_field: 'simple_value'
-        array_field: ['array_value1', 'array_value2']
-        named_field:
-          named1: 'named_value1'
-          named2: 'named_value2'
-          array1: ['array_value1', 'array_value2']
-          array2: ['array_value3']
+        token: 'ABC'
+        user:
+          name: "John Doe"
+          email: "john@email.com"
+          country: "CL"
+          gender: "male"
+          skills: ["JS", "CSS"]

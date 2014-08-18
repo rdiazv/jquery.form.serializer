@@ -16,14 +16,25 @@
      * About the "name" attribute
      * http://www.w3.org/TR/html4/types.html#h-6.2
      */
-    var Serializer, regexp, selectors;
+    var Serializer, regexp, submittable;
     regexp = {
       simple: /^[a-z][\w-:\.]*$/i,
       array: /^([a-z][\w-:\.]*)\[(.*\])$/i
     };
-    selectors = {
-      submittable: 'input, select, textarea',
-      submittableFilter: ':enabled'
+    submittable = {
+      selector: 'input, select, textarea',
+      filters: {
+        enabled: function() {
+          return $(this).is(":enabled");
+        },
+        checked: function() {
+          if ($(this).is(":checkbox, :radio")) {
+            return $(this).is(":checked");
+          } else {
+            return true;
+          }
+        }
+      }
     };
     Serializer = (function() {
       function Serializer($this) {
@@ -55,9 +66,15 @@
       };
 
       Serializer.prototype.getSubmittableFieldValues = function() {
-        var fields;
+        var $submittable, fields, filter, _, _ref;
         fields = [];
-        this.$this.find(selectors.submittable).filter("[name]").filter(selectors.submittableFilter).each(function() {
+        $submittable = this.$this.find(submittable.selector).filter("[name]");
+        _ref = submittable.filters;
+        for (_ in _ref) {
+          filter = _ref[_];
+          $submittable = $submittable.filter(filter);
+        }
+        $submittable.each(function() {
           var name;
           name = $(this).attr('name');
           return fields.push([name, $(this).val()]);
@@ -83,7 +100,7 @@
       return new $.fn.getSerializedForm.Serializer(this.first()).serialize();
     };
     $.fn.getSerializedForm.regexp = regexp;
-    $.fn.getSerializedForm.selectors = selectors;
+    $.fn.getSerializedForm.submittable = submittable;
     return $.fn.getSerializedForm.Serializer = Serializer;
   })(jQuery);
 

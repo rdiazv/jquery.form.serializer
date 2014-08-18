@@ -2,7 +2,7 @@
 (function() {
   describe('$.fn.getSerializedForm.Serializer', function() {
     beforeEach(function() {
-      return this.$form = $("<form action=\"/\">\n  <input type=\"text\" name=\"simple_field\" value=\"simple_value\" />\n  <input type=\"text\" name=\"array_field[]\" value=\"array_value1\" />\n  <input type=\"text\" name=\"array_field[]\" value=\"array_value2\" />\n  <input type=\"text\" name=\"named_field[named1]\" value=\"named_value1\" />\n  <input type=\"text\" name=\"named_field[named2]\" value=\"named_value2\" />\n  <input type=\"text\" name=\"named_field[array1][]\" value=\"array_value1\" />\n  <input type=\"text\" name=\"named_field[array1][]\" value=\"array_value2\" />\n  <input type=\"text\" name=\"named_field[array2][]\" value=\"array_value3\" />\n</form>");
+      return this.$form = $("<form>\n  <input type=\"hidden\" name=\"token\" value=\"ABC\" />\n  <input type=\"text\" name=\"user[name]\" value=\"John Doe\" />\n  <input type=\"text\" name=\"user[email]\" value=\"john@email.com\" />\n  <select name=\"user[country]\">\n    <option value=\"CL\" selected>Chile</option>\n  </select>\n  <input type=\"radio\" name=\"user[gender]\" value=\"male\" checked />\n  <input type=\"radio\" name=\"user[gender]\" value=\"female\" />\n  <input type=\"checkbox\" name=\"user[skills][]\" value=\"JS\" checked />\n  <input type=\"checkbox\" name=\"user[skills][]\" value=\"C++\" />\n  <input type=\"checkbox\" name=\"user[skills][]\" value=\"Java\" />\n  <input type=\"checkbox\" name=\"user[skills][]\" value=\"CSS\" checked />\n</form>");
     });
     describe('constructor($this)', function() {
       return it('should save the element as an instance variable', function() {
@@ -86,7 +86,7 @@
       it('should return all submittable fields as a key, value pairs array', function() {
         var fields;
         fields = this.serializer.getSubmittableFieldValues();
-        return expect(fields).to.eql([["simple_field", "simple_value"], ["array_field[]", "array_value1"], ["array_field[]", "array_value2"], ["named_field[named1]", "named_value1"], ["named_field[named2]", "named_value2"], ["named_field[array1][]", "array_value1"], ["named_field[array1][]", "array_value2"], ["named_field[array2][]", "array_value3"]]);
+        return expect(fields).to.eql([["token", "ABC"], ["user[name]", "John Doe"], ["user[email]", "john@email.com"], ["user[country]", "CL"], ["user[gender]", "male"], ["user[skills][]", "JS"], ["user[skills][]", "CSS"]]);
       });
       return it('should ignore fields without a name', function() {
         var fields;
@@ -101,13 +101,13 @@
       });
       return it('should return a json with all the submittable field values serialized', function() {
         return expect(this.serializer.serialize()).to.eql({
-          simple_field: 'simple_value',
-          array_field: ['array_value1', 'array_value2'],
-          named_field: {
-            named1: 'named_value1',
-            named2: 'named_value2',
-            array1: ['array_value1', 'array_value2'],
-            array2: ['array_value3']
+          token: 'ABC',
+          user: {
+            name: "John Doe",
+            email: "john@email.com",
+            country: "CL",
+            gender: "male",
+            skills: ["JS", "CSS"]
           }
         });
       });

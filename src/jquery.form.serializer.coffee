@@ -19,9 +19,17 @@
     simple: /^[a-z][\w-:\.]*$/i
     array: /^([a-z][\w-:\.]*)\[(.*\])$/i
 
-  selectors =
-    submittable: 'input, select, textarea'
-    submittableFilter: ':enabled'
+  submittable =
+    selector: 'input, select, textarea'
+    filters:
+      enabled: ->
+        $(this).is(":enabled")
+
+      checked: ->
+        if $(this).is(":checkbox, :radio")
+          $(this).is(":checked")
+        else
+          true
 
   class Serializer
     constructor: ($this) ->
@@ -49,11 +57,14 @@
     getSubmittableFieldValues: ->
       fields = []
 
-      @$this.find(selectors.submittable)
-        .filter("[name]")
-        .filter(selectors.submittableFilter).each ->
-          name = $(this).attr('name')
-          fields.push([name, $(this).val()])
+      $submittable = @$this.find(submittable.selector).filter("[name]")
+
+      for _, filter of submittable.filters
+        $submittable = $submittable.filter(filter)
+
+      $submittable.each ->
+        name = $(this).attr('name')
+        fields.push([name, $(this).val()])
 
       fields
 
@@ -70,7 +81,7 @@
     new $.fn.getSerializedForm.Serializer(@first()).serialize()
 
   $.fn.getSerializedForm.regexp = regexp
-  $.fn.getSerializedForm.selectors = selectors
+  $.fn.getSerializedForm.submittable = submittable
   $.fn.getSerializedForm.Serializer = Serializer
 
 )(jQuery)
