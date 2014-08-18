@@ -7,9 +7,16 @@
   regexp =
     simple: /^[a-zA-Z][a-zA-Z0-9-_:\.]*$/
 
+  class Serializer
+    serializeField: (name, value) ->
+      response = {}
+      response[name] = value if regexp.simple.test(name)
+      response
+
   $.fn.getSerializedForm = (options = {}) ->
     this.each ->
 
   $.fn.getSerializedForm.regexp = regexp
+  $.fn.getSerializedForm.Serializer = Serializer
 
 )(jQuery)
