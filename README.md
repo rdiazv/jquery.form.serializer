@@ -4,6 +4,7 @@ This jQuery extension provides an easy way to serialize HTML forms into JSON.
 
 By default the serialization it's based on the submittable fields according to [W3C Successful controls](http://www.w3.org/TR/html401/interact/forms.html#h-17.13.2), but this is easily customizable to fit your needs.
 
+**NOTE:** File inputs are ignored.
 
 ## Installation
 
@@ -45,7 +46,7 @@ $("#my-form").getSerializedForm();
 }
 ```
 
-## Customization
+## Submittable Fields
 
 The submittable fields are selected according to these default options:
 
@@ -91,7 +92,7 @@ $("#my-form").getSerializedForm({
 });
 ```
 
-### Custom Controls
+## Custom Controls
 
 You can easily integrate any custom control for serialization. For example, given this custom control:
 
@@ -107,7 +108,7 @@ You can easily integrate any custom control for serialization. For example, give
 ```javascript
 $.valHooks.custom_control = {
   get: function(el) {
-    $(el).data("custom-value");
+    return $(el).data("custom-value");
   },
   set: function(el, value) {
     $(el).data({ "custom-value": value });
@@ -117,9 +118,9 @@ $.valHooks.custom_control = {
 $.fn.customControl = function() {
   return $(this).each(function() {
     this.type = "custom_control";
-  });
 
-  // All your custom control magic...
+    // All your custom control magic...
+  });
 };
 
 $(function() {
@@ -133,18 +134,70 @@ Add your custom control to the global configuration:
 $.fn.getSerializedForm.submittable.selector += ", .custom-control"
 ```
 
+Add any filter necessary:
+
+```javascript
+$.fn.getSerializedForm.submittable.filters.customControlEnabled = function() {
+  if ($(this).hasClass("custom-control")) {
+    return !$(this).hasClass("disabled");
+  }
+  else {
+    return true;
+  }
+};
+```
+
 And that's it!
 
 ```javascript
-$("#my-form").getSerializedForm();
+$("#my-form").getSerializedForm(); // => { "my-custom-control": "my value" }
 
-// =>
-{
-  "my-custom-control": "my value"
-}
+$(".custom-control").addClass("disabled");
+$("#my-form").getSerializedForm(); // => {}
 ```
 
-Tests
------
+## Value Castings
+
+Value castings allows you to preprocess a field value before serializing it. The only default value casting returns true or false on checkboxes without an explicit `value` attribute.
+
+```javascript
+$.fn.getSerializedForm.castings = {
+  boolean: function() {
+    if ($(this).is(":checkbox") && !$(this).attr("value")) {
+      $(this).prop("checked");
+    }
+  }
+};
+```
+
+You can add additional castings if needed. For example, assume you have some numeric only inputs that returns strings after serializing:
+
+```html
+<form id="my-form">
+  <input type="text" name="field" class="numeric" value="1234" />
+</form>
+```
+
+```javascript
+$("#my-form").getSerializedForm(); // => { field: "1234" }
+```
+
+You could create a new casting to make these fields return a number instead:
+
+```javascript
+$("#my-form").getSerializedForm({
+  castings: {
+    numericField: function() {
+      if ($(this).hasClass("numeric")) {
+        parseInt($(this).val());
+      }
+    }
+  }
+});
+
+// => { field: 1234 }
+```
+
+## Tests
 
 Open `./test/index.html` on any browser.

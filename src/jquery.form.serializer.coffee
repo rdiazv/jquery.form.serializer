@@ -5,7 +5,7 @@
 # @copyright 2014, Rodrigo Díaz V. <rdiazv89@gmail.com>
 # @link https://github.com/rdiazv/jquery.form.serializer
 # @license MIT
-# @version 0.2.1
+# @version 0.3
 ###
 
 (($) ->
@@ -31,6 +31,11 @@
         else
           true
 
+  castings =
+    boolean: ->
+      if $(this).is(":checkbox") and not $(this).attr("value")
+        $(this).prop("checked")
+
   class Serializer
     constructor: ($this) ->
       @$this = $this
@@ -55,10 +60,15 @@
       response
 
     getSubmittableFieldValues: (options) ->
-      options = $.extend(true, {}, submittable: submittable, options)
+      options = $.extend true, {},
+        submittable: submittable
+        castings: castings
+      , options
+
       fields = []
 
-      $submittable = @$this.find(options.submittable.selector).filter("[name]")
+      $submittable = @$this.find(options.submittable.selector)
+        .filter(":not(:file)[name]")
 
       for _, filter of options.submittable.filters
         continue if filter == false or not filter?
@@ -66,7 +76,17 @@
 
       $submittable.each ->
         name = $(this).attr('name')
-        fields.push([name, $(this).val()])
+        value = $(this).val()
+
+        for _, casting of options.castings
+          continue if casting == false or not casting?
+          castedValue = casting.apply(this)
+
+          if castedValue?
+            value = castedValue
+            break
+
+        fields.push([name, value])
 
       fields
 
@@ -84,6 +104,7 @@
 
   $.fn.getSerializedForm.regexp = regexp
   $.fn.getSerializedForm.submittable = submittable
+  $.fn.getSerializedForm.castings = castings
   $.fn.getSerializedForm.Serializer = Serializer
 
 )(jQuery)

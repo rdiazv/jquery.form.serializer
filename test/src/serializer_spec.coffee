@@ -7,6 +7,8 @@ describe '$.fn.getSerializedForm.Serializer', ->
         <input type="hidden" name="token" value="ABC" />
         <input type="text" name="user[name]" value="John Doe" />
         <input type="text" name="user[email]" value="john@email.com" />
+        <input type="checkbox" name="user[newsletter]" checked />
+        <input type="file" name="user[image]" value="../dummy/image.png" />
         <select name="user[country]">
           <option value="CL" selected>Chile</option>
         </select>
@@ -81,6 +83,7 @@ describe '$.fn.getSerializedForm.Serializer', ->
         ["token", "ABC" ],
         ["user[name]", "John Doe"],
         ["user[email]", "john@email.com"],
+        ["user[newsletter]", true],
         ["user[country]", "CL"],
         ["user[gender]", "male"],
         ["user[skills][]", "JS"],
@@ -133,6 +136,20 @@ describe '$.fn.getSerializedForm.Serializer', ->
 
         expect(fields).to.eql [["custom", "my value"]]
 
+    it 'should call value castings on every field', ->
+      @$form.html """
+        <input type="text" value="123" name="field1" class="numeric" />
+        <input type="text" value="123" name="field2" />
+        """
+
+      fields = @serializer.getSubmittableFieldValues
+        castings:
+          numericFields: ->
+            if $(this).hasClass("numeric")
+              parseInt($(this).val())
+
+      expect(fields).to.eql [["field1", 123], ["field2", "123"]]
+
   describe '.serialize(options = {})', ->
     beforeEach ->
       @serializer = new $.fn.getSerializedForm.Serializer(@$form)
@@ -143,6 +160,7 @@ describe '$.fn.getSerializedForm.Serializer', ->
         user:
           name: "John Doe"
           email: "john@email.com"
+          newsletter: true
           country: "CL"
           gender: "male"
           skills: ["JS", "CSS"]
