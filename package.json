@@ -13,7 +13,8 @@
     "jsdom": "0.11.x"
   },
   "scripts": {
-    "test": "mocha --require specs/support/spec_helper.js specs/test"
+    "test": "mocha --require specs/support/spec_helper.js specs/test",
+    "minify": "uglifyjs jquery.form.serializer.js -m -c --comments > jquery.form.serializer.min.js"
   },
   "repository": {
     "type": "git",
