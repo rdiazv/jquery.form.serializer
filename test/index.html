@@ -1,0 +1,32 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Tests</title>
+    <link type="text/css" rel="stylesheet" media="all" href="lib/mocha.css" />
+  </head>
+  <body>
+    <div id="mocha"></div>
+
+    <script type="text/javascript" src="lib/mocha.js"></script>
+    <script type="text/javascript" src="lib/sinon-1.10.3.js"></script>
+    <script type="text/javascript" src="lib/chai.js"></script>
+    <script type="text/javascript" src="lib/sinon-chai.js"></script>
+    <script type="text/javascript" src="lib/jquery-2.1.1.js"></script>
+    <script type="text/javascript" src="../build/jquery.form.serializer.js"></script>
+
+    <script>
+      mocha.checkLeaks();
+      mocha.globals(['jQuery']);
+      mocha.setup('bdd');
+    </script>
+
+    <script type="text/javascript" src="build/spec_helper.js"></script>
+    <script type="text/javascript" src="build/regexp_spec.js"></script>
+    <script type="text/javascript" src="build/serializer_spec.js"></script>
+    <script type="text/javascript" src="build/jquery.form.serializer_spec.js"></script>
+
+    <script>
+      mocha.run();
+    </script>
+  </body>
+</html>
