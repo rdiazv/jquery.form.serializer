@@ -37,7 +37,7 @@
       }
     };
     castings = {
-      boolean: function() {
+      booleanCheckbox: function() {
         if ($(this).is(":checkbox") && !$(this).attr("value")) {
           return $(this).prop("checked");
         }

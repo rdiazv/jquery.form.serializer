@@ -32,7 +32,7 @@
           true
 
   castings =
-    boolean: ->
+    booleanCheckbox: ->
       if $(this).is(":checkbox") and not $(this).attr("value")
         $(this).prop("checked")
 
