@@ -36,3 +36,27 @@ describe '$.fn.getSerializedForm.Serializer', ->
         expect(value).to.eql
           emails:
             john: 'john@email.com'
+
+  describe '.getSubmittableFieldValues()', ->
+    beforeEach ->
+      $form = $ """
+        <form action="/">
+          <input type="text" name="simple_field" value="simple_value" />
+          <input type="text" name="array_field[]" value="array_value1" />
+          <input type="text" name="array_field[]" value="array_value2" />
+          <input type="text" name="named_field[named1]" value="named_value1" />
+          <input type="text" name="named_field[named2]" value="named_value2" />
+        </form>
+        """
+
+      @serializer = new $.fn.getSerializedForm.Serializer($form)
+
+    it 'should return all submittable fields as a key, value pairs array', ->
+      fields = @serializer.getSubmittableFieldValues()
+      expect(fields).to.eql [
+        ["simple_field", "simple_value" ],
+        ["array_field[]", "array_value1" ],
+        ["array_field[]", "array_value2" ],
+        ["named_field[named1]", "named_value1"],
+        ["named_field[named2]", "named_value2"]
+      ]

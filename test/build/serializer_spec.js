@@ -9,7 +9,7 @@
         return expect(serializer.$this).to.eq($this);
       });
     });
-    return describe('.serializeField(name, value)', function() {
+    describe('.serializeField(name, value)', function() {
       beforeEach(function() {
         return this.serializer = new $.fn.getSerializedForm.Serializer;
       });
@@ -55,6 +55,18 @@
             }
           });
         });
+      });
+    });
+    return describe('.getSubmittableFieldValues()', function() {
+      beforeEach(function() {
+        var $form;
+        $form = $("<form action=\"/\">\n  <input type=\"text\" name=\"simple_field\" value=\"simple_value\" />\n  <input type=\"text\" name=\"array_field[]\" value=\"array_value1\" />\n  <input type=\"text\" name=\"array_field[]\" value=\"array_value2\" />\n  <input type=\"text\" name=\"named_field[named1]\" value=\"named_value1\" />\n  <input type=\"text\" name=\"named_field[named2]\" value=\"named_value2\" />\n</form>");
+        return this.serializer = new $.fn.getSerializedForm.Serializer($form);
+      });
+      return it('should return all submittable fields as a key, value pairs array', function() {
+        var fields;
+        fields = this.serializer.getSubmittableFieldValues();
+        return expect(fields).to.eql([["simple_field", "simple_value"], ["array_field[]", "array_value1"], ["array_field[]", "array_value2"], ["named_field[named1]", "named_value1"], ["named_field[named2]", "named_value2"]]);
       });
     });
   });

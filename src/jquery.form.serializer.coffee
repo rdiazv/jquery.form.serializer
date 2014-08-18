@@ -9,6 +9,10 @@
     array: /^([a-z][\w-:\.]*)\[\]$/i
     named: /^([a-z][\w-:\.]*)\[(.+)\]$/i
 
+  selectors =
+    submittable: 'input, select, textarea'
+    submittableFilter: '[name]:not(:disabled)'
+
   class Serializer
     constructor: ($this) ->
       @$this = $this
@@ -28,12 +32,23 @@
 
       response
 
+    getSubmittableFieldValues: ->
+      fields = []
+
+      @$this.find(selectors.submittable)
+        .filter(selectors.submittableFilter).each ->
+          name = $(this).attr('name')
+          fields.push([name, $(this).val()])
+
+      fields
+
     serialize: ->
 
   $.fn.getSerializedForm = ->
     new $.fn.getSerializedForm.Serializer(@first()).serialize()
 
   $.fn.getSerializedForm.regexp = regexp
+  $.fn.getSerializedForm.selectors = selectors
   $.fn.getSerializedForm.Serializer = Serializer
 
 )(jQuery)
