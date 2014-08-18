@@ -3,7 +3,7 @@
   describe('$.fn.getSerializedForm.Serializer', function() {
     beforeEach(function() {
       this.sandbox = sinon.sandbox.create();
-      return this.$form = $("<form>\n  <input type=\"hidden\" name=\"token\" value=\"ABC\" />\n  <input type=\"text\" name=\"user[name]\" value=\"John Doe\" />\n  <input type=\"text\" name=\"user[email]\" value=\"john@email.com\" />\n  <input type=\"file\" name=\"user[image]\" value=\"../dummy/image.png\" />\n  <select name=\"user[country]\">\n    <option value=\"CL\" selected>Chile</option>\n  </select>\n  <input type=\"radio\" name=\"user[gender]\" value=\"male\" checked />\n  <input type=\"radio\" name=\"user[gender]\" value=\"female\" />\n  <input type=\"checkbox\" name=\"user[skills][]\" value=\"JS\" checked />\n  <input type=\"checkbox\" name=\"user[skills][]\" value=\"C++\" />\n  <input type=\"checkbox\" name=\"user[skills][]\" value=\"Java\" />\n  <input type=\"checkbox\" name=\"user[skills][]\" value=\"CSS\" checked />\n</form>");
+      return this.$form = $("<form>\n  <input type=\"hidden\" name=\"token\" value=\"ABC\" />\n  <input type=\"text\" name=\"user[name]\" value=\"John Doe\" />\n  <input type=\"text\" name=\"user[email]\" value=\"john@email.com\" />\n  <input type=\"checkbox\" name=\"user[newsletter]\" checked />\n  <input type=\"file\" name=\"user[image]\" value=\"../dummy/image.png\" />\n  <select name=\"user[country]\">\n    <option value=\"CL\" selected>Chile</option>\n  </select>\n  <input type=\"radio\" name=\"user[gender]\" value=\"male\" checked />\n  <input type=\"radio\" name=\"user[gender]\" value=\"female\" />\n  <input type=\"checkbox\" name=\"user[skills][]\" value=\"JS\" checked />\n  <input type=\"checkbox\" name=\"user[skills][]\" value=\"C++\" />\n  <input type=\"checkbox\" name=\"user[skills][]\" value=\"Java\" />\n  <input type=\"checkbox\" name=\"user[skills][]\" value=\"CSS\" checked />\n</form>");
     });
     afterEach(function() {
       return this.sandbox.restore();
@@ -90,7 +90,7 @@
       it('should return all submittable fields as a key, value pairs array', function() {
         var fields;
         fields = this.serializer.getSubmittableFieldValues();
-        return expect(fields).to.eql([["token", "ABC"], ["user[name]", "John Doe"], ["user[email]", "john@email.com"], ["user[country]", "CL"], ["user[gender]", "male"], ["user[skills][]", "JS"], ["user[skills][]", "CSS"]]);
+        return expect(fields).to.eql([["token", "ABC"], ["user[name]", "John Doe"], ["user[email]", "john@email.com"], ["user[newsletter]", true], ["user[country]", "CL"], ["user[gender]", "male"], ["user[skills][]", "JS"], ["user[skills][]", "CSS"]]);
       });
       it('should ignore fields without a name', function() {
         var fields;
@@ -110,7 +110,7 @@
         });
         return expect(fields).to.eql([["test1", "enabled"], ["test2", "disabled"]]);
       });
-      return context('working with custom controls', function() {
+      context('working with custom controls', function() {
         beforeEach(function() {
           return $.valHooks.custom_control = {
             get: function(el) {
@@ -142,6 +142,20 @@
           return expect(fields).to.eql([["custom", "my value"]]);
         });
       });
+      return it('should call value castings on every field', function() {
+        var fields;
+        this.$form.html("<input type=\"text\" value=\"123\" name=\"field1\" class=\"numeric\" />\n<input type=\"text\" value=\"123\" name=\"field2\" />");
+        fields = this.serializer.getSubmittableFieldValues({
+          castings: {
+            numericFields: function() {
+              if ($(this).hasClass("numeric")) {
+                return parseInt($(this).val());
+              }
+            }
+          }
+        });
+        return expect(fields).to.eql([["field1", 123], ["field2", "123"]]);
+      });
     });
     return describe('.serialize(options = {})', function() {
       beforeEach(function() {
@@ -153,6 +167,7 @@
           user: {
             name: "John Doe",
             email: "john@email.com",
+            newsletter: true,
             country: "CL",
             gender: "male",
             skills: ["JS", "CSS"]

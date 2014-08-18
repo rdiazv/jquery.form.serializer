@@ -16,7 +16,7 @@
      * About the "name" attribute
      * http://www.w3.org/TR/html4/types.html#h-6.2
      */
-    var Serializer, regexp, submittable;
+    var Serializer, castings, regexp, submittable;
     regexp = {
       simple: /^[a-z][\w-:\.]*$/i,
       array: /^([a-z][\w-:\.]*)\[(.*\])$/i
@@ -33,6 +33,13 @@
           } else {
             return true;
           }
+        }
+      }
+    };
+    castings = {
+      boolean: function() {
+        if ($(this).is(":checkbox") && !$(this).attr("value")) {
+          return $(this).prop("checked");
         }
       }
     };
@@ -68,7 +75,8 @@
       Serializer.prototype.getSubmittableFieldValues = function(options) {
         var $submittable, fields, filter, _, _ref;
         options = $.extend(true, {}, {
-          submittable: submittable
+          submittable: submittable,
+          castings: castings
         }, options);
         fields = [];
         $submittable = this.$this.find(options.submittable.selector).filter(":not(:file)[name]");
@@ -81,9 +89,22 @@
           $submittable = $submittable.filter(filter);
         }
         $submittable.each(function() {
-          var name;
+          var castedValue, casting, name, value, _ref1;
           name = $(this).attr('name');
-          return fields.push([name, $(this).val()]);
+          value = $(this).val();
+          _ref1 = options.castings;
+          for (_ in _ref1) {
+            casting = _ref1[_];
+            if (casting === false || (casting == null)) {
+              continue;
+            }
+            castedValue = casting.apply(this);
+            if (castedValue != null) {
+              value = castedValue;
+              break;
+            }
+          }
+          return fields.push([name, value]);
         });
         return fields;
       };
@@ -113,6 +134,7 @@
     };
     $.fn.getSerializedForm.regexp = regexp;
     $.fn.getSerializedForm.submittable = submittable;
+    $.fn.getSerializedForm.castings = castings;
     return $.fn.getSerializedForm.Serializer = Serializer;
   })(jQuery);
 

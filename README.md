@@ -46,7 +46,7 @@ $("#my-form").getSerializedForm();
 }
 ```
 
-## Customization
+## Submittable Fields
 
 The submittable fields are selected according to these default options:
 
@@ -92,7 +92,7 @@ $("#my-form").getSerializedForm({
 });
 ```
 
-### Custom Controls
+## Custom Controls
 
 You can easily integrate any custom control for serialization. For example, given this custom control:
 
@@ -156,7 +156,48 @@ $(".custom-control").addClass("disabled");
 $("#my-form").getSerializedForm(); // => {}
 ```
 
-Tests
------
+## Value Castings
+
+Value castings allows you to preprocess a field value before serializing it. The only default value casting returns true or false on checkboxes without an explicit `value` attribute.
+
+```javascript
+$.fn.getSerializedForm.castings = {
+  boolean: function() {
+    if ($(this).is(":checkbox") && !$(this).attr("value")) {
+      $(this).prop("checked");
+    }
+  }
+};
+```
+
+You can add additional castings if needed. For example, assume you have some numeric only inputs that returns strings after serializing:
+
+```html
+<form id="my-form">
+  <input type="text" name="field" class="numeric" value="1234" />
+</form>
+```
+
+```javascript
+$("#my-form").getSerializedForm(); // => { field: "1234" }
+```
+
+You could create a new casting to make these fields return a number instead:
+
+```javascript
+$("#my-form").getSerializedForm({
+  castings: {
+    numericField: function() {
+      if ($(this).hasClass("numeric")) {
+        parseInt($(this).val());
+      }
+    }
+  }
+});
+
+// => { field: 1234 }
+```
+
+## Tests
 
 Open `./test/index.html` on any browser.
