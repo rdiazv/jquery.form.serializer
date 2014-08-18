@@ -71,7 +71,7 @@
           submittable: submittable
         }, options);
         fields = [];
-        $submittable = this.$this.find(options.submittable.selector).filter("[name]");
+        $submittable = this.$this.find(options.submittable.selector).filter(":not(:file)[name]");
         _ref = options.submittable.filters;
         for (_ in _ref) {
           filter = _ref[_];

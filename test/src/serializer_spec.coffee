@@ -7,6 +7,7 @@ describe '$.fn.getSerializedForm.Serializer', ->
         <input type="hidden" name="token" value="ABC" />
         <input type="text" name="user[name]" value="John Doe" />
         <input type="text" name="user[email]" value="john@email.com" />
+        <input type="file" name="user[image]" value="../dummy/image.png" />
         <select name="user[country]">
           <option value="CL" selected>Chile</option>
         </select>

@@ -58,7 +58,8 @@
       options = $.extend(true, {}, submittable: submittable, options)
       fields = []
 
-      $submittable = @$this.find(options.submittable.selector).filter("[name]")
+      $submittable = @$this.find(options.submittable.selector)
+        .filter(":not(:file)[name]")
 
       for _, filter of options.submittable.filters
         continue if filter == false or not filter?
