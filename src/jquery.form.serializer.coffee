@@ -1,8 +1,19 @@
 
-# About the "name" attribute
-# http://www.w3.org/TR/html4/types.html#h-6.2
+###
+# jquery.form.serializer
+#
+# @copyright 2014, Rodrigo Díaz V. <rdiazv89@gmail.com>
+# @link https://github.com/rdiazv/jquery.form.serializer
+# @license MIT
+# @version 0.1
+###
 
 (($) ->
+
+  ###
+  # About the "name" attribute
+  # http://www.w3.org/TR/html4/types.html#h-6.2
+  ###
 
   regexp =
     simple: /^[a-z][\w-:\.]*$/i
