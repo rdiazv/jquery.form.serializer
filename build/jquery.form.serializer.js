@@ -6,7 +6,7 @@
  * @copyright 2014, Rodrigo Díaz V. <rdiazv89@gmail.com>
  * @link https://github.com/rdiazv/jquery.form.serializer
  * @license MIT
- * @version 0.2
+ * @version 0.2.1
  */
 
 (function() {
@@ -25,7 +25,7 @@
       selector: 'input, select, textarea',
       filters: {
         enabled: function() {
-          return $(this).is(":enabled");
+          return $(this).is(":not(:disabled)");
         },
         checked: function() {
           if ($(this).is(":checkbox, :radio")) {
