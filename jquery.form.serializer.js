@@ -91,7 +91,11 @@
         $submittable.each(function() {
           var castedValue, casting, name, value, _ref1;
           name = $(this).attr('name');
-          value = $(this).val();
+          if ($(this).is(":checkbox") && !$(this).attr("value")) {
+            value = $(this).prop("checked") ? "on" : "off";
+          } else {
+            value = $(this).val();
+          }
           _ref1 = options.castings;
           for (_ in _ref1) {
             casting = _ref1[_];

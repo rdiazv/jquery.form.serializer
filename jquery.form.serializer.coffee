@@ -76,7 +76,11 @@
 
       $submittable.each ->
         name = $(this).attr('name')
-        value = $(this).val()
+
+        if $(this).is(":checkbox") and not $(this).attr("value")
+          value = if $(this).prop("checked") then "on" else "off"
+        else
+          value = $(this).val()
 
         for _, casting of options.castings
           continue if casting == false or not casting?
