@@ -107,7 +107,7 @@ You can easily integrate any custom control for serialization. For example, give
 ```javascript
 $.valHooks.custom_control = {
   get: function(el) {
-    $(el).data("custom-value");
+    return $(el).data("custom-value");
   },
   set: function(el, value) {
     $(el).data({ "custom-value": value });
@@ -117,9 +117,9 @@ $.valHooks.custom_control = {
 $.fn.customControl = function() {
   return $(this).each(function() {
     this.type = "custom_control";
-  });
 
-  // All your custom control magic...
+    // All your custom control magic...
+  });
 };
 
 $(function() {
@@ -133,15 +133,26 @@ Add your custom control to the global configuration:
 $.fn.getSerializedForm.submittable.selector += ", .custom-control"
 ```
 
+Add any filter necessary:
+
+```javascript
+$.fn.getSerializedForm.submittable.filters.customControlEnabled = function() {
+  if ($(this).hasClass("custom-control")) {
+    return !$(this).hasClass("disabled");
+  }
+  else {
+    return true;
+  }
+};
+```
+
 And that's it!
 
 ```javascript
-$("#my-form").getSerializedForm();
+$("#my-form").getSerializedForm(); // => { "my-custom-control": "my value" }
 
-// =>
-{
-  "my-custom-control": "my value"
-}
+$(".custom-control").addClass("disabled");
+$("#my-form").getSerializedForm(); // => {}
 ```
 
 Tests
