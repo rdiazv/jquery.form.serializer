@@ -19,17 +19,17 @@
     simple: /^[a-z][\w-:\.]*$/i
     array: /^([a-z][\w-:\.]*)\[(.*\])$/i
 
-  submittable =
-    selector: 'input, select, textarea'
-    filters:
-      enabled: ->
-        $(this).is(":not(:disabled)")
+  submittable = 'input, select, textarea'
 
-      checked: ->
-        if $(this).is(":checkbox, :radio")
-          $(this).is(":checked")
-        else
-          true
+  filters =
+    enabledOnly: ->
+      $(this).is(":not(:disabled)")
+
+    checkedOnly: ->
+      if $(this).is(":checkbox, :radio")
+        $(this).is(":checked")
+      else
+        true
 
   castings =
     booleanCheckbox: ->
@@ -60,17 +60,13 @@
       response
 
     _getSubmittableFieldValues: (options) ->
-      options = $.extend true, {},
-        submittable: submittable
-        castings: castings
-      , options
-
+      options = $.extend(true, {}, $.jQueryFormSerializer, options)
       fields = []
 
-      $submittable = @$this.find(options.submittable.selector)
+      $submittable = @$this.find(options.submittable)
         .filter(":not(:button, :submit, :file, :reset, :image)[name]")
 
-      for _, filter of options.submittable.filters
+      for _, filter of options.filters
         continue if filter == false or not filter?
         $submittable = $submittable.filter(filter)
 
@@ -104,12 +100,15 @@
       values
 
   $.fn.getSerializedForm = (options = {}) ->
-    new $.jQueryFormSerializer.Serializer(@first()).toJSON(options)
+    new $._jQueryFormSerializer.Serializer(@first()).toJSON(options)
+
+  $._jQueryFormSerializer =
+    Serializer: Serializer
+    regexp: regexp
 
   $.jQueryFormSerializer =
-    regexp: regexp
     submittable: submittable
     castings: castings
-    Serializer: Serializer
+    filters: filters
 
 )(jQuery)

@@ -16,23 +16,21 @@
      * About the "name" attribute
      * http://www.w3.org/TR/html4/types.html#h-6.2
      */
-    var Serializer, castings, regexp, submittable;
+    var Serializer, castings, filters, regexp, submittable;
     regexp = {
       simple: /^[a-z][\w-:\.]*$/i,
       array: /^([a-z][\w-:\.]*)\[(.*\])$/i
     };
-    submittable = {
-      selector: 'input, select, textarea',
-      filters: {
-        enabled: function() {
-          return $(this).is(":not(:disabled)");
-        },
-        checked: function() {
-          if ($(this).is(":checkbox, :radio")) {
-            return $(this).is(":checked");
-          } else {
-            return true;
-          }
+    submittable = 'input, select, textarea';
+    filters = {
+      enabledOnly: function() {
+        return $(this).is(":not(:disabled)");
+      },
+      checkedOnly: function() {
+        if ($(this).is(":checkbox, :radio")) {
+          return $(this).is(":checked");
+        } else {
+          return true;
         }
       }
     };
@@ -74,13 +72,10 @@
 
       Serializer.prototype._getSubmittableFieldValues = function(options) {
         var $submittable, fields, filter, _, _ref;
-        options = $.extend(true, {}, {
-          submittable: submittable,
-          castings: castings
-        }, options);
+        options = $.extend(true, {}, $.jQueryFormSerializer, options);
         fields = [];
-        $submittable = this.$this.find(options.submittable.selector).filter(":not(:button, :submit, :file, :reset, :image)[name]");
-        _ref = options.submittable.filters;
+        $submittable = this.$this.find(options.submittable).filter(":not(:button, :submit, :file, :reset, :image)[name]");
+        _ref = options.filters;
         for (_ in _ref) {
           filter = _ref[_];
           if (filter === false || (filter == null)) {
@@ -137,13 +132,16 @@
       if (options == null) {
         options = {};
       }
-      return new $.jQueryFormSerializer.Serializer(this.first()).toJSON(options);
+      return new $._jQueryFormSerializer.Serializer(this.first()).toJSON(options);
+    };
+    $._jQueryFormSerializer = {
+      Serializer: Serializer,
+      regexp: regexp
     };
     return $.jQueryFormSerializer = {
-      regexp: regexp,
       submittable: submittable,
       castings: castings,
-      Serializer: Serializer
+      filters: filters
     };
   })(jQuery);
 

@@ -7,22 +7,16 @@ By default the serialization it's based on the submittable fields according to [
 The following elements are always ignored:
 
 * Elements without a `name` attribute.
-* `input[type="file"]`
-* `input[type="button"]`
-* `input[type="submit"]`
-* `input[type="reset"]`
-* `input[type="image"]`
-* `button[type="button"]`
-* `button[type="submit"]`
-* `button[type="reset"]`
+* File inputs.
+* Buttons.
 
 ## Installation
 
-Include `jquery.form.serializer.js` after `jquery.js`.
+Include `jquery.form.serializer.min.js` after `jquery.js`.
 
 ```html
 <script type="text/javascript" src="jquery.js"></script>
-<script type="text/javascript" src="jquery.form.serializer.js"></script>
+<script type="text/javascript" src="jquery.form.serializer.min.js"></script>
 ```
 
 ## Usage
@@ -40,7 +34,7 @@ Based on a form like this one:
 </form>
 ```
 
-Serialize the form with the default options:
+Serialize the form into JSON:
 
 ```javascript
 $("#my-form").getSerializedForm();
@@ -58,51 +52,72 @@ $("#my-form").getSerializedForm();
 
 ## Submittable Fields
 
-The submittable fields are selected according to these default options:
+The submittable fields are initially selected using:
 
 ```javascript
-$.jQueryFormSerializer.submittable = {
-  selector: 'input, select, textarea',
-  filters: {
-    enabled: function() {
-      return $(this).is(":enabled");
-    },
-    checked: function() {
-      if ($(this).is(":checkbox, :radio")) {
-        return $(this).is(":checked");
-      } else {
-        return true;
-      }
-    }
-  }
-};
+$.jQueryFormSerializer.submittable = 'input, select, textarea';
 ```
 
-The `selector` it's used to get a first set of fields to process.
+The initial matched set it's reduced passing every function defined in `$.jQueryFormSerializer.filters` to the [filter function](http://api.jquery.com/filter/).
 
-The `filters` are a key-value set of functions that are passed to the initial matched set using the [jQuery's filter function](http://api.jquery.com/filter/). **NOTE:** Any filter with value `false`, `null` or `undefined` will be ignored.
+There are two default filters:
 
-You can replace these settings for a global customization, or you can pass the options on `getSerializedForm` to change the settings only for that call.
+* `enabledOnly`: Disabled fields won't be serialized.
+* `checkedOnly`: Only checked `input[type="checkbox"]` and `input[type="radio"]` will be serialized.
 
-For example, to always include disabled fields:
+## Value Castings
+
+Value castings are defined in `$.jQueryFormSerializer.castings`, and allows you to preprocess a field value before serializing it.
+
+The only default value casting it's `booleanCheckbox`, that returns `true` or `false` on checkboxes without an explicit `value` attribute.
+
+## Customization
+
+Any option declared in `$.jQueryFormSerializer` can be overwritten if you need a global customization, or you can pass a hash of options to `getSerializedForm` that will [extend](http://api.jquery.com/jquery.extend/) `$.jQueryFormSerializer`, allowing to change the defaults only for one call.
+
+### Examples
+
+Always allow disabled fields to be serialized:
 
 ```javascript
-$.jQueryFormSerializer.submittable.filters.enabled = false;
+$.jQueryFormSerializer.filters.enabledOnly = false;
 ```
 
-To include disabled fields only for this call:
+Allow unchecked fields to be serialized only for this call:
 
 ```javascript
 $("#my-form").getSerializedForm({
-  submittable: {
-    filters: {
-      enabled: false
+  filters: {
+    checkedOnly: false
+  }
+});
+```
+
+Add a new filter to avoid serializing fields with `.disabled`:
+
+```javascript
+$.jQueryFormSerializer.filters.disabledByClass = function() {
+  return !$(this).hasClass("disabled");
+};
+```
+
+Add a new value casting for numeric fields:
+
+```javascript
+$("#my-form").getSerializedForm({
+  castings: {
+    numericField: function() {
+      if ($(this).hasClass("numeric")) {
+        return parseInt($(this).val());
+      }
     }
   }
 });
 ```
 
-## Custom Controls
+The same applies to `filters`, `castings` and the `submittable` selector.
+
+### Custom Controls
 
 You can easily integrate any custom control for serialization. For example, given this custom control:
 
@@ -118,7 +133,7 @@ $.valHooks.custom_control = {
     return $(el).data("custom-value");
   },
   set: function(el, value) {
-    $(el).data({ "custom-value": value });
+    return $(el).data({ "custom-value": value });
   }
 };
 
@@ -138,20 +153,7 @@ $(function() {
 Add your custom control to the global configuration:
 
 ```javascript
-$.jQueryFormSerializer.submittable.selector += ", .custom-control"
-```
-
-Add any filter necessary:
-
-```javascript
-$.jQueryFormSerializer.submittable.filters.customControlEnabled = function() {
-  if ($(this).hasClass("custom-control")) {
-    return !$(this).hasClass("disabled");
-  }
-  else {
-    return true;
-  }
-};
+$.jQueryFormSerializer.submittable += ", .custom-control"
 ```
 
 And that's it!
@@ -163,48 +165,6 @@ $(".custom-control").addClass("disabled");
 $("#my-form").getSerializedForm(); // => {}
 ```
 
-## Value Castings
-
-Value castings allows you to preprocess a field value before serializing it. The only default value casting returns true or false on checkboxes without an explicit `value` attribute.
-
-```javascript
-$.jQueryFormSerializer.castings = {
-  booleanCheckbox: function() {
-    if ($(this).is(":checkbox") && !$(this).attr("value")) {
-      return $(this).prop("checked");
-    }
-  }
-};
-```
-
-You can add additional castings if needed. For example, assume you have some numeric only inputs that returns strings after serializing:
-
-```html
-<form id="my-form">
-  <input type="text" name="field" class="numeric" value="1234" />
-</form>
-```
-
-```javascript
-$("#my-form").getSerializedForm(); // => { field: "1234" }
-```
-
-You could create a new casting to make these fields return a number instead:
-
-```javascript
-$("#my-form").getSerializedForm({
-  castings: {
-    numericField: function() {
-      if ($(this).hasClass("numeric")) {
-        return parseInt($(this).val());
-      }
-    }
-  }
-});
-
-// => { field: 1234 }
-```
-
 ## Tests
 
-Open `./test/index.html` on any browser, or if you have [Node.js](http://nodejs.org/) installed, run `npm install` and `npm test`.
+Run `npm install` and `npm test`, or if you don't have [Node.js](http://nodejs.org/) installed, open `./specs/index.html` on any browser.
