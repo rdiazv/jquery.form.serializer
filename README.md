@@ -61,7 +61,7 @@ $("#my-form").getSerializedForm();
 The submittable fields are selected according to these default options:
 
 ```javascript
-$.fn.getSerializedForm.submittable = {
+$.jQueryFormSerializer.submittable = {
   selector: 'input, select, textarea',
   filters: {
     enabled: function() {
@@ -87,7 +87,7 @@ You can replace these settings for a global customization, or you can pass the o
 For example, to always include disabled fields:
 
 ```javascript
-$.fn.getSerializedForm.submittable.filters.enabled = false;
+$.jQueryFormSerializer.submittable.filters.enabled = false;
 ```
 
 To include disabled fields only for this call:
@@ -138,13 +138,13 @@ $(function() {
 Add your custom control to the global configuration:
 
 ```javascript
-$.fn.getSerializedForm.submittable.selector += ", .custom-control"
+$.jQueryFormSerializer.submittable.selector += ", .custom-control"
 ```
 
 Add any filter necessary:
 
 ```javascript
-$.fn.getSerializedForm.submittable.filters.customControlEnabled = function() {
+$.jQueryFormSerializer.submittable.filters.customControlEnabled = function() {
   if ($(this).hasClass("custom-control")) {
     return !$(this).hasClass("disabled");
   }
@@ -168,7 +168,7 @@ $("#my-form").getSerializedForm(); // => {}
 Value castings allows you to preprocess a field value before serializing it. The only default value casting returns true or false on checkboxes without an explicit `value` attribute.
 
 ```javascript
-$.fn.getSerializedForm.castings = {
+$.jQueryFormSerializer.castings = {
   booleanCheckbox: function() {
     if ($(this).is(":checkbox") && !$(this).attr("value")) {
       return $(this).prop("checked");
