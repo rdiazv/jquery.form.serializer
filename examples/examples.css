@@ -1,0 +1,39 @@
+body, html {
+  margin: 0;
+  padding: 20px;
+}
+
+.examples-col {
+  padding-bottom: 100px;
+}
+
+.console {
+  height: 100%;
+  margin: 0;
+}
+
+.page-header {
+  margin-top: 0;
+}
+
+.main-row {
+  height: 100%;
+}
+
+.main-row > div {
+  height: 100%;
+  overflow-y: auto;
+}
+
+.custom-select .btn {
+  text-align: left;
+}
+
+.custom-select .caret {
+  float: right;
+  margin-top: 8px;
+}
+
+.custom-select .dropdown-menu {
+  width: 100%;
+}

@@ -1,0 +1,225 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Examples</title>
+    <link rel="stylesheet" href="lib/bootstrap.min.css" />
+    <link rel="stylesheet" href="lib/bootstrap-theme.min.css" />
+    <link rel="stylesheet" href="examples.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="row main-row">
+        <div class="col-xs-6 examples-col">
+          <h1 class="page-header">jQuery Examples</h1>
+          <p>Submit any form to see the serialized result in the panel on the right.</p>
+
+          <h3>Example #1 <small>Defaults options</h3>
+          <p>Serializing with defaults options.</p>
+
+          <form id="e1" class="form-horizontal" role="form">
+            <input type="hidden" name="hidden_token" value="ABC">
+
+            <fieldset>
+              <legend>User information</legend>
+
+              <div class="form-group">
+                <label class="col-xs-4 control-label" for="e1-user_name">user[name]</label>
+                <div class="col-xs-8">
+                  <input type="text" class="form-control" name="user[name]" id="e1-user_name" value="John Doe">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-xs-4 control-label" for="e1-user_email">user[email]</label>
+                <div class="col-xs-8">
+                  <input type="text" class="form-control" name="user[email]" id="e1-user_email" value="john@email.com">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-xs-4 control-label" for="e1-user_country">user[country]</label>
+                <div class="col-xs-8">
+                  <select name="user[country]" class="form-control">
+                    <option value="CL" selected>Chile</option>
+                    <option value="US">United States</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-xs-4 control-label">user[newsletter]</label>
+                <div class="col-xs-8">
+                  <div class="checkbox">
+                    <label>
+                      <input type="checkbox" name="user[newsletter]" checked>
+                      I want to receive promotional emails.
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-xs-4 control-label">user[interests][]</label>
+                <div class="col-xs-8">
+                  <div class="row">
+                    <div class="col-xs-6">
+                      <div class="checkbox">
+                        <label>
+                          <input type="checkbox" name="user[interests][]" value="Music">
+                          Music
+                        </label>
+                      </div>
+                      <div class="checkbox">
+                        <label>
+                          <input type="checkbox" name="user[interests][]" value="Sports">
+                          Sports
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col-xs-6">
+                      <div class="checkbox">
+                        <label>
+                          <input type="checkbox" name="user[interests][]" value="Books">
+                          Books
+                        </label>
+                      </div>
+                      <div class="checkbox">
+                        <label>
+                          <input type="checkbox" name="user[interests][]" value="Technology">
+                          Technology
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend>Enterprise information</legend>
+
+              <div class="form-group">
+                <label class="col-xs-4 control-label" for="e1-user_enterprise_name">user[enterprise][name]</label>
+                <div class="col-xs-8">
+                  <input type="text" class="form-control" name="user[enterprise][name]" id="e1-user_enterprise_name" value="Google" readonly>
+                  <p class="help-block">This is a <code>[readonly]</code> field.</p>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-xs-4 control-label" for="e1-user_enterprise_url">user[enterprise][url]</label>
+                <div class="col-xs-8">
+                  <input type="text" class="form-control" name="user[enterprise][url]" id="e1-user_enterprise_url" value="http://www.google.com" disabled>
+                  <p class="help-block">This is a <code>[disabled]</code> field.</p>
+                </div>
+              </div>
+            </fieldset>
+            <div class="form-group">
+              <div class="col-xs-8 col-xs-offset-4">
+                <button type="submit" class="btn btn-default">Submit Form</button>
+              </div>
+            </div>
+          </form>
+
+          <h3>Example #2 <small>Custom options</small></h3>
+          <p>This example shows how to use custom value castings. The <em>Custom Submit</em> button applies this options to the serialization:</p>
+
+          <pre>castings: {
+  numericField: function() {
+    if ($(this).hasClass("numeric")) {
+      return parseInt($(this).val());
+    }
+  }
+}</pre>
+
+          <form id="e2" class="form-horizontal" role="form">
+            <div class="form-group">
+              <label class="col-xs-4 control-label" for="e2-numeric_field">numeric_field</label>
+              <div class="col-xs-8">
+                <input type="text" class="form-control numeric" name="numeric_field" id="e2-numeric_field" value="1234">
+                <p class="help-block">This field has the class <code>numeric</code>, and expects to have only numbers as a value.</p>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-xs-8 col-xs-offset-4">
+                <button type="submit" class="btn btn-default" data-options="default">Default Options</button>
+                <button type="submit" class="btn btn-default" data-options="custom">Custom Submit</button>
+              </div>
+            </div>
+          </form>
+
+          <h3>Example #3 <small>Non-standard fields</small></h3>
+          <p>This example shows how you can integrate non-standard form controls with the serialization. The <em>Custom Submit</em> button applies this options to the serialization:</p>
+
+          <pre>{
+  submittable: $.jQueryFormSerializer.submittable + ", .custom-select",
+  filters: {
+    enabledCustomSelectOnly: function() {
+      if ($(this).hasClass("custom-select")) {
+        return !$(this).find(".btn").hasClass("disabled");
+      } else {
+        return true;
+      }
+    }
+  }
+}</pre>
+
+          <form id="e3" class="form-horizontal" role="form">
+            <div class="form-group">
+              <label class="col-xs-4 control-label" for="e3-custom_control_1">custom_control_1</label>
+              <div class="col-xs-8">
+                <div class="dropdown custom-select" name="custom_control_1" data-custom-select-value="Option value 1">
+                  <a class="btn btn-default btn-block" role="button" data-toggle="dropdown">
+                    <span data-custom-select-text>Option 1</span>
+                    <span class="caret"></span>
+                  </a>
+
+                  <ul class="dropdown-menu" role="menu">
+                    <li class="active">
+                      <a class="clickable" data-value="Option value 1">Option 1</a>
+                    </li>
+                    <li>
+                      <a class="clickable" data-value="Option value 2">Option 2</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-xs-4 control-label" for="e3-custom_control_2">custom_control_2</label>
+              <div class="col-xs-8">
+                <div class="dropdown custom-select" name="custom_control_2" data-custom-select-value="Option value 1">
+                  <a class="btn btn-default btn-block disabled" role="button" data-toggle="dropdown">
+                    <span data-custom-select-text>Option 1</span>
+                    <span class="caret"></span>
+                  </a>
+
+                  <ul class="dropdown-menu" role="menu">
+                    <li class="active">
+                      <a class="clickable" data-value="Option value 1">Option 1</a>
+                    </li>
+                    <li>
+                      <a class="clickable" data-value="Option value 2">Option 2</a>
+                    </li>
+                  </ul>
+                </div>
+
+                <p class="help-block">This custom control has a <code>disabled</code> class.</p>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-xs-8 col-xs-offset-4">
+                <button type="submit" class="btn btn-default" data-options="default">Default Options</button>
+                <button type="submit" class="btn btn-default" data-options="custom">Custom Submit</button>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="col-xs-6">
+          <pre class="form-control console"></pre>
+        </div>
+      </div>
+    </div>
+
+    <script type="text/javascript" src="lib/jquery-2.1.1.js"></script>
+    <script type="text/javascript" src="lib/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../jquery.form.serializer.min.js"></script>
+    <script type="text/javascript" src="custom-select.js"></script>
+    <script type="text/javascript" src="examples.js"></script>
+  </body>
+</html>
