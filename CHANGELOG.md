@@ -1,3 +1,12 @@
+1.2.0 (August 20, 2014)
+------------------------
+
+* Coverage report.
+* Buttons are now ignored.
+* Cross-browser default value for checkboxes.
+* Extendable options are now exposed through `$.jQueryFormSerializer`.
+* Adding examples page.
+
 1.1.0 (August 18, 2014)
 ------------------------
 
