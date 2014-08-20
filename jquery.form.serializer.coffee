@@ -5,7 +5,7 @@
 # @copyright 2014, Rodrigo Díaz V. <rdiazv89@gmail.com>
 # @link https://github.com/rdiazv/jquery.form.serializer
 # @license MIT
-# @version 1.1.0
+# @version 1.2.0
 ###
 
 (($) ->
@@ -19,17 +19,17 @@
     simple: /^[a-z][\w-:\.]*$/i
     array: /^([a-z][\w-:\.]*)\[(.*\])$/i
 
-  submittable =
-    selector: 'input, select, textarea'
-    filters:
-      enabled: ->
-        $(this).is(":not(:disabled)")
+  submittable = 'input, select, textarea'
 
-      checked: ->
-        if $(this).is(":checkbox, :radio")
-          $(this).is(":checked")
-        else
-          true
+  filters =
+    enabledOnly: ->
+      $(this).is(":not(:disabled)")
+
+    checkedOnly: ->
+      if $(this).is(":checkbox, :radio")
+        $(this).is(":checked")
+      else
+        true
 
   castings =
     booleanCheckbox: ->
@@ -41,7 +41,7 @@
       @$this = $this
       @arrays = {}
 
-    serializeField: (name, value, fullName = name) ->
+    _serializeField: (name, value, fullName = name) ->
       response = {}
 
       if regexp.simple.test(name)
@@ -55,28 +55,28 @@
           @arrays[fullName].push(value)
           response[matches[1]] = @arrays[fullName]
         else
-          response[matches[1]] = @serializeField(cleanName, value, name)
+          response[matches[1]] = @_serializeField(cleanName, value, name)
 
       response
 
-    getSubmittableFieldValues: (options) ->
-      options = $.extend true, {},
-        submittable: submittable
-        castings: castings
-      , options
-
+    _getSubmittableFieldValues: (options) ->
+      options = $.extend(true, {}, $.jQueryFormSerializer, options)
       fields = []
 
-      $submittable = @$this.find(options.submittable.selector)
-        .filter(":not(:file)[name]")
+      $submittable = @$this.find(options.submittable)
+        .filter(":not(:button, :submit, :file, :reset, :image)[name]")
 
-      for _, filter of options.submittable.filters
+      for _, filter of options.filters
         continue if filter == false or not filter?
         $submittable = $submittable.filter(filter)
 
       $submittable.each ->
         name = $(this).attr('name')
-        value = $(this).val()
+
+        if $(this).is(":checkbox") and not $(this).attr("value")
+          value = if $(this).prop("checked") then "on" else "off"
+        else
+          value = $(this).val()
 
         for _, casting of options.castings
           continue if casting == false or not casting?
@@ -90,21 +90,25 @@
 
       fields
 
-    serialize: (options = {}) ->
+    toJSON: (options = {}) ->
       values = {}
-      fields = @getSubmittableFieldValues(options)
+      fields = @_getSubmittableFieldValues(options)
 
       for field in fields
-        $.extend(true, values, @serializeField(field.name, field.value))
+        $.extend(true, values, @_serializeField(field.name, field.value))
 
       values
 
   $.fn.getSerializedForm = (options = {}) ->
-    new $.fn.getSerializedForm.Serializer(@first()).serialize(options)
+    new $._jQueryFormSerializer.Serializer(@first()).toJSON(options)
 
-  $.fn.getSerializedForm.regexp = regexp
-  $.fn.getSerializedForm.submittable = submittable
-  $.fn.getSerializedForm.castings = castings
-  $.fn.getSerializedForm.Serializer = Serializer
+  $._jQueryFormSerializer =
+    Serializer: Serializer
+    regexp: regexp
+
+  $.jQueryFormSerializer =
+    submittable: submittable
+    castings: castings
+    filters: filters
 
 )(jQuery)

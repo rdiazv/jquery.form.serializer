@@ -14,7 +14,6 @@
     sinonChai = require("sinon-chai");
     chai.use(sinonChai);
     global.$ = global.jQuery = require('jquery');
-    require('../../jquery.form.serializer');
   }
 
 }).call(this);

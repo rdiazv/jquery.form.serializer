@@ -1,5 +1,5 @@
 
-describe '$.fn.getSerializedForm.Serializer', ->
+describe '$._jQueryFormSerializer.Serializer', ->
   beforeEach ->
     @sandbox = sinon.sandbox.create()
     @$form = $ """
@@ -18,6 +18,7 @@ describe '$.fn.getSerializedForm.Serializer', ->
         <input type="checkbox" name="user[skills][]" value="C++" />
         <input type="checkbox" name="user[skills][]" value="Java" />
         <input type="checkbox" name="user[skills][]" value="CSS" checked />
+        <input type="button" name="my-submit" value="Submit Form" />
       </form>
       """
 
@@ -27,58 +28,58 @@ describe '$.fn.getSerializedForm.Serializer', ->
   describe 'constructor($this)', ->
     it 'should save the element as an instance variable', ->
       $this = $()
-      serializer = new $.fn.getSerializedForm.Serializer($this)
+      serializer = new $._jQueryFormSerializer.Serializer($this)
       expect(serializer.$this).to.eq($this)
 
-  describe '.serializeField(name, value)', ->
+  describe '._serializeField(name, value)', ->
     beforeEach ->
-      @serializer = new $.fn.getSerializedForm.Serializer
+      @serializer = new $._jQueryFormSerializer.Serializer
 
     context 'if the name is a simple field name', ->
       it 'should return a plain value', ->
-        value = @serializer.serializeField('email', 'test@email.com')
+        value = @serializer._serializeField('email', 'test@email.com')
         expect(value).to.eql(email: 'test@email.com')
 
     context 'if the name is an array field name', ->
       context 'the key', ->
         it 'should not contain the brackets', ->
-          value = @serializer.serializeField('emails[]', 'test@email.com')
+          value = @serializer._serializeField('emails[]', 'test@email.com')
           expect(value).to.have.key('emails')
 
       it 'should return an array', ->
-        value = @serializer.serializeField('emails[]', 'test@email.com')
+        value = @serializer._serializeField('emails[]', 'test@email.com')
         expect(value).to.eql(emails: ['test@email.com'])
 
       it 'should merge consecutive calls to the same array field', ->
-        @serializer.serializeField('emails[]', 'test1@email.com')
-        value = @serializer.serializeField('emails[]', 'test2@email.com')
+        @serializer._serializeField('emails[]', 'test1@email.com')
+        value = @serializer._serializeField('emails[]', 'test2@email.com')
         expect(value).to.eql(emails: ['test1@email.com', 'test2@email.com'])
 
     context 'if the name is a named array field name', ->
       context 'the key', ->
         it 'should not contain the brackets', ->
-          value = @serializer.serializeField('emails[john]', 'john@email.com')
+          value = @serializer._serializeField('emails[john]', 'john@email.com')
           expect(value).to.have.key('emails')
 
       it 'should return a json object', ->
-        value = @serializer.serializeField('emails[john]', 'john@email.com')
+        value = @serializer._serializeField('emails[john]', 'john@email.com')
         expect(value).to.eql
           emails:
             john: 'john@email.com'
 
       it 'should handle nested attributes', ->
-        value = @serializer.serializeField('emails[john][current]', 'john@email.com')
+        value = @serializer._serializeField('emails[john][current]', 'john@email.com')
         expect(value).to.eql
           emails:
             john:
               current: 'john@email.com'
 
-  describe '.getSubmittableFieldValues(options)', ->
+  describe '._getSubmittableFieldValues(options)', ->
     beforeEach ->
-      @serializer = new $.fn.getSerializedForm.Serializer(@$form)
+      @serializer = new $._jQueryFormSerializer.Serializer(@$form)
 
     it 'should return all submittable fields as a name, value json array', ->
-      fields = @serializer.getSubmittableFieldValues()
+      fields = @serializer._getSubmittableFieldValues()
       expect(fields).to.eql [
         { name: "token", value: "ABC" },
         { name: "user[name]", value: "John Doe" },
@@ -96,7 +97,7 @@ describe '$.fn.getSerializedForm.Serializer', ->
         <input type="text" value="invalid" />
         """
 
-      fields = @serializer.getSubmittableFieldValues()
+      fields = @serializer._getSubmittableFieldValues()
       expect(fields).to.eql [name: "test", value: "valid"]
 
     it 'should be customizable by passing options', ->
@@ -105,10 +106,9 @@ describe '$.fn.getSerializedForm.Serializer', ->
         <input type="text" name="test2" value="disabled" disabled />
         """
 
-      fields = @serializer.getSubmittableFieldValues
-        submittable:
-          filters:
-            enabled: false
+      fields = @serializer._getSubmittableFieldValues
+        filters:
+          enabledOnly: false
 
       expect(fields).to.eql [
         { name: "test1", value: "enabled" }
@@ -121,9 +121,6 @@ describe '$.fn.getSerializedForm.Serializer', ->
           get: (el) ->
             $(el).data("value")
 
-          set: (el, value) ->
-            $(el).data("value": value)
-
       afterEach ->
         delete $.valHooks.custom_control
 
@@ -133,9 +130,8 @@ describe '$.fn.getSerializedForm.Serializer', ->
         $control.get(0).type = "custom_control"
         @$form.html($control)
 
-        fields = @serializer.getSubmittableFieldValues
-          submittable:
-            selector: "#{$.fn.getSerializedForm.submittable.selector}, .custom-control"
+        fields = @serializer._getSubmittableFieldValues
+          submittable: "#{$.jQueryFormSerializer.submittable.selector}, .custom-control"
 
         expect(fields).to.eql [name: "custom", value: "my value"]
 
@@ -145,7 +141,7 @@ describe '$.fn.getSerializedForm.Serializer', ->
         <input type="text" value="123" name="field2" />
         """
 
-      fields = @serializer.getSubmittableFieldValues
+      fields = @serializer._getSubmittableFieldValues
         castings:
           numericFields: ->
             if $(this).hasClass("numeric")
@@ -156,12 +152,23 @@ describe '$.fn.getSerializedForm.Serializer', ->
         { name: "field2", value: "123" }
       ]
 
-  describe '.serialize(options = {})', ->
+    it 'should allow to customize castings by passing options', ->
+      @$form.html """
+        <input type="checkbox" name="test" checked />
+        """
+
+      fields = @serializer._getSubmittableFieldValues
+        castings:
+          booleanCheckbox: false
+
+      expect(fields).to.eql [{ name: "test", value: "on" }]
+
+  describe '.toJSON(options = {})', ->
     beforeEach ->
-      @serializer = new $.fn.getSerializedForm.Serializer(@$form)
+      @serializer = new $._jQueryFormSerializer.Serializer(@$form)
 
     it 'should return a json with all the submittable field values serialized', ->
-      expect(@serializer.serialize()).to.eql
+      expect(@serializer.toJSON()).to.eql
         token: 'ABC'
         user:
           name: "John Doe"
@@ -171,12 +178,12 @@ describe '$.fn.getSerializedForm.Serializer', ->
           gender: "male"
           skills: ["JS", "CSS"]
 
-    it 'should pass the options to getSubmittableFieldValues', ->
-      @sandbox.spy $.fn.getSerializedForm.Serializer.prototype, "getSubmittableFieldValues"
+    it 'should pass the options to _getSubmittableFieldValues', ->
+      @sandbox.spy $._jQueryFormSerializer.Serializer.prototype, "_getSubmittableFieldValues"
 
       options = { option1: 1 }
 
-      @serializer.serialize(options)
+      @serializer.toJSON(options)
 
-      expect($.fn.getSerializedForm.Serializer::getSubmittableFieldValues).to
+      expect($._jQueryFormSerializer.Serializer::_getSubmittableFieldValues).to
         .have.been.calledWith(options)
